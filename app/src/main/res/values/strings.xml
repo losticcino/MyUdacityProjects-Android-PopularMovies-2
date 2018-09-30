@@ -1,3 +1,16 @@
 <resources>
+    <!--  -->
+    <!-- Main App Strings -->
     <string name="app_name">Popular Movies Stage 1</string>
+    <string name="loading_message">Loading...</string>
+    <string name="error_message">An Error Has Occurred.</string>
+
+    <!-- Menu Strings -->
+    <string name="sortBy_popularity">Sort By Popularity</string>
+    <string name="sortBy_rating">Sort By Rating</string>
+    <string name="sortBy_name">Sort By Name</string>
+    <string name="sort_by">Sort By</string>
+    <string name="refresh">Refresh</string>
+
+    <!--  -->
 </resources>
