@@ -16,7 +16,8 @@ public class Constants {
     public static final String TMDBWidthMed = "w185";
     public static final String TMDBWidthBig = "w500";
     public static final String TMDBWidthOrg = "original";
-    public static final String TMDBImageServerPath = "t/p";
+    public static final String TMDBImageServerPathT = "t";
+    public static final String TMDBImageServerPathP = "p";
 
     public static final String TMDBMovieType = "movie";
 

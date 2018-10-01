@@ -2,6 +2,8 @@ package com.rasjdd.ras.popularmoviesstage1;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
@@ -23,6 +25,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.rasjdd.ras.popularmoviesstage1.Adapters.MainViewAdapter;
 import com.rasjdd.ras.popularmoviesstage1.Models.MovieList;
 import com.rasjdd.ras.popularmoviesstage1.Utilities.Constants;
 import com.rasjdd.ras.popularmoviesstage1.Utilities.NetUtils;
@@ -33,17 +36,16 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainViewAdapter.MainAdapterOnClickHandler {
 
-    private String sortingParameter;
     private int mPageNumber;
     private String mSortType;
     private String mSortOrder;
 
     private RecyclerView mRecyclerView;
+    private MainViewAdapter mMainViewAdapter;
     private TextView mErrorMessage;
     private ProgressBar mLoadingBar;
-    private ImageView mPosterView;
 
     private RequestQueue requestQueue;
     private Gson gson;
@@ -67,24 +69,32 @@ public class MainActivity extends AppCompatActivity {
 
         mLoadingBar = (ProgressBar) findViewById(R.id.pb_mainLoadScreen);
 
-        mPosterView = (ImageView) findViewById(R.id.iv_gallery_poster);
-
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_posterGrid);
-
-        URL mURL = NetUtils.buildAPIURL(Constants.TMDBMovieType, mPageNumber, mSortType, mSortOrder);
-        getMovieList(mURL.toString());
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.serializeNulls();
         gson = gsonBuilder.create();
 
+        //LinearLayoutManager layoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL, false);
+        GridLayoutManager layoutManager = new GridLayoutManager(this,3);
+
+        mRecyclerView.setLayoutManager(layoutManager);
+        //mRecyclerView.hasFixedSize();
+
+        mMainViewAdapter = new MainViewAdapter(this);
+
+        mRecyclerView.setAdapter(mMainViewAdapter);
+
+        URL mURL = NetUtils.buildAPIURL(Constants.TMDBMovieType, mPageNumber, mSortType, mSortOrder);
+        getMovieList(mURL.toString());
     }
 
     private void getMovieList(String s) {
         StringRequest listRequest = new StringRequest(Request.Method.GET, s, new webResponseListener(), new webErrorListener());
         requestQueue.add(listRequest);
+        mLoadingBar.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -101,24 +111,28 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_action_refresh:
                 getURL = NetUtils.buildAPIURL(Constants.TMDBMovieType, mPageNumber, mSortType, mSortOrder);
+                mMainViewAdapter.setMovieList(null);
                 mErrorMessage.setVisibility(View.GONE);
                 mLoadingBar.setVisibility(View.VISIBLE);
                 getMovieList(getURL.toString());
                 break;
             case R.id.menu_sort_popularity:
                 getURL = NetUtils.buildAPIURL(Constants.TMDBMovieType, 871, Constants.sortByPopularity, Constants.sortDescending);
+                mMainViewAdapter.setMovieList(null);
                 mErrorMessage.setVisibility(View.GONE);
                 mLoadingBar.setVisibility(View.VISIBLE);
                 getMovieList(getURL.toString());
                 break;
             case R.id.menu_sort_rating:
                 getURL = NetUtils.buildAPIURL(Constants.TMDBMovieType, 1, Constants.sortByRating, Constants.sortDescending);
+                mMainViewAdapter.setMovieList(null);
                 mErrorMessage.setVisibility(View.GONE);
                 mLoadingBar.setVisibility(View.VISIBLE);
                 getMovieList(getURL.toString());
                 break;
             case R.id.menu_sort_name:
                 getURL = NetUtils.buildAPIURL(Constants.TMDBMovieType, 1, Constants.sortByTitle, Constants.sortAscending);
+                mMainViewAdapter.setMovieList(null);
                 mErrorMessage.setVisibility(View.GONE);
                 mLoadingBar.setVisibility(View.VISIBLE);
                 getMovieList(getURL.toString());
@@ -129,22 +143,18 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onClick(MovieList.ResultList result) {
+
+    }
+
     private class webResponseListener implements Response.Listener<String> {
 
         @Override
         public void onResponse(String response) {
-            mLoadingBar.setVisibility(View.GONE);
-            Log.e("response","success");
-            Log.e("response",response);
             MovieList moviesList = gson.fromJson(response,MovieList.class);
-            String msg = "";
-
-            for (MovieList.ResultList resultList : moviesList.getResults()) {
-                msg += resultList.getTitle() + "  " + resultList.getPoster_path() + "\n\n";
-            }
-
-            mErrorMessage.setText(msg);
-            mErrorMessage.setVisibility(View.VISIBLE);
+            mMainViewAdapter.setMovieList(moviesList.getResults());
+            showMovieGrid();
         }
     }
 
@@ -158,22 +168,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showMovieList () {
+    private void showMovieGrid() {
+        mLoadingBar.setVisibility(View.GONE);
+
         mErrorMessage.setVisibility(View.GONE);
-    }
 
-    private class MovieListObject extends JsonObjectRequest {
-
-        public MovieListObject(int method, String url, JSONObject jsonRequest, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener) {
-            super(method, url, jsonRequest, listener, errorListener);
-        }
-
-        @Override
-        public Map<String, String> getHeaders() throws AuthFailureError {
-            Map<String, String> mlob = new HashMap<String, String>();
-            mlob.put("Accept","application/json");
-            return mlob;
-        }
+        mRecyclerView.setVisibility(View.VISIBLE);
     }
 
 }

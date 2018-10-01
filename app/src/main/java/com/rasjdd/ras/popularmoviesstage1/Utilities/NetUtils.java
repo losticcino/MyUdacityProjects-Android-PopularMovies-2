@@ -66,7 +66,8 @@ public class NetUtils {
             Uri.Builder formedURI = new Uri.Builder();
             formedURI.scheme("https")
                     .authority(Constants.TMDBImageServer)
-                    .appendPath(Constants.TMDBImageServerPath)
+                    .appendPath(Constants.TMDBImageServerPathT)
+                    .appendPath(Constants.TMDBImageServerPathP)
                     .appendPath(imgWidth)
                     .appendPath(imagePath)
                     .build();

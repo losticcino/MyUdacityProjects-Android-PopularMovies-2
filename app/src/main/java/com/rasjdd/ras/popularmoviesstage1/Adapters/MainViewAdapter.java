@@ -1,10 +1,12 @@
 package com.rasjdd.ras.popularmoviesstage1.Adapters;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,11 +16,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.StringRequest;
+import com.rasjdd.ras.popularmoviesstage1.MainActivity;
 import com.rasjdd.ras.popularmoviesstage1.Models.MovieDetails;
 import com.rasjdd.ras.popularmoviesstage1.Models.MovieList;
 import com.rasjdd.ras.popularmoviesstage1.R;
 import com.rasjdd.ras.popularmoviesstage1.Utilities.Constants;
 import com.rasjdd.ras.popularmoviesstage1.Utilities.NetUtils;
+import com.squareup.picasso.Picasso;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -31,7 +35,7 @@ public class MainViewAdapter extends RecyclerView.Adapter<MainViewAdapter.MainVi
 
     private final MainAdapterOnClickHandler mClickHandler;
 
-    private interface MainAdapterOnClickHandler {
+    public interface MainAdapterOnClickHandler {
         void onClick(MovieList.ResultList result);
     }
 
@@ -50,29 +54,33 @@ public class MainViewAdapter extends RecyclerView.Adapter<MainViewAdapter.MainVi
 
         @Override
         public void onClick(View v) {
-            MovieList.ResultList thisResult = mMovieList.get(getAdapterPosition());
-            mClickHandler.onClick(thisResult);
+            MovieList.ResultList mResult = mMovieList.get(getAdapterPosition());
+            mClickHandler.onClick(mResult);
         }
     }
 
+    @NonNull
     @Override
-    public MainViewAdapterViewHolder onCreateViewHolder( ViewGroup viewGroup, int i) {
+    public MainViewAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         Context context = viewGroup.getContext();
         int galleryItemID = R.layout.gallery_layout;
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View view = inflater.inflate(galleryItemID, viewGroup, true);
+        View view = inflater.inflate(galleryItemID, viewGroup, false);
 
         return new MainViewAdapterViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(MainViewAdapterViewHolder mainViewAdapterViewHolder, int i) {
+    public void onBindViewHolder(@NonNull MainViewAdapterViewHolder mainViewAdapterViewHolder, int i) {
         String imageAddr = mMovieList.get(i).getPoster_path();
-        URL imagePath = NetUtils.buildImageURL(Constants.TMDBWidthBig,imageAddr);
-        Uri uri = Uri.parse(imagePath.toString());
+        URL imagePath = NetUtils.buildImageURL(Constants.TMDBWidthBig,imageAddr.substring(1));
 
-        mainViewAdapterViewHolder.mainViewImageView.setImageURI(uri);
+        Picasso.get()
+                .load(imagePath.toString())
+                .placeholder(R.drawable.ic_image_placeholder)
+                .into(mainViewAdapterViewHolder.mainViewImageView);
+
     }
 
     public int getItemCount() {
@@ -80,8 +88,8 @@ public class MainViewAdapter extends RecyclerView.Adapter<MainViewAdapter.MainVi
         return mMovieList.size();
     }
 
-    public void setmMovieList(ArrayList<MovieList.ResultList> mMovieList) {
-        this.mMovieList = mMovieList;
+    public void setMovieList(ArrayList<MovieList.ResultList> results) {
+        mMovieList = results;
         notifyDataSetChanged();
     }
 }
