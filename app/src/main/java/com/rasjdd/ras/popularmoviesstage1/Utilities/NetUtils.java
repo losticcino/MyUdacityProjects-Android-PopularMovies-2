@@ -10,6 +10,7 @@ import com.android.volley.toolbox.Volley;
 import com.rasjdd.ras.popularmoviesstage1.MainActivity;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 public class NetUtils {
@@ -30,10 +31,10 @@ public class NetUtils {
 
     public static URL buildAPIURL(String mediaType, Integer pageNum, String sortType, String sortOrder){
         //Set Defaults in case they're forgotten
-        if (mediaType == null) {mediaType = Constants.TMDBMovieType;}
-        if (sortType == null) {sortType = Constants.sortByPopularity;}
-        if (sortOrder == null) {sortOrder = Constants.sortDescending;}
-        if (pageNum == null || pageNum <= 1) {pageNum = 1;}
+        if (mediaType == null) mediaType = Constants.TMDBMovieType;
+        if (sortType == null) sortType = Constants.sortByPopularity;
+        if (sortOrder == null) sortOrder = Constants.sortDescending;
+        if (pageNum == null || pageNum <= 1) pageNum = 1;
 
         Uri.Builder formedURI = new Uri.Builder();
         formedURI.scheme("https")
@@ -51,6 +52,38 @@ public class NetUtils {
             url = new URL(formedURI.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static URL buildImageURL(String imgWidth, String imagePath) {
+        //Set Defaults in case they're forgotten
+        URL url = null;
+        if (imagePath != null) {
+            if (imgWidth == null) imgWidth = Constants.TMDBWidthMed;
+
+            Uri.Builder formedURI = new Uri.Builder();
+            formedURI.scheme("https")
+                    .authority(Constants.TMDBImageServer)
+                    .appendPath(Constants.TMDBImageServerPath)
+                    .appendPath(imgWidth)
+                    .appendPath(imagePath)
+                    .build();
+            try {
+                url = new URL(formedURI.toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            Uri mURI;
+            mURI = Uri.parse(Constants.TMDBLogoUrl);
+            try {
+                url = new URL(mURI.toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         }
 
         return url;

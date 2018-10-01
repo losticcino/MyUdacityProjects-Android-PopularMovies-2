@@ -4,8 +4,10 @@ import com.android.volley.toolbox.StringRequest;
 
 public class Constants {
     public static final String TMDBAPIServer = "api.themoviedb.org";
-    public static final String TMDBImageServer = "image.tmdb.org/t/p";
+    public static final String TMDBImageServer = "image.tmdb.org";
     // sample TMDB image url https://image.tmdb.org/t/p/w185/3IGbjc5ZC5yxim5W0sFING2kdcz.jpg
+    public static final String TMDBLogoUrl = "https://www.themoviedb.org/assets/1/v4/logos/" +
+            "293x302-powered-by-square-green-3ee4814bb59d8260d51efdd7c124383540fc04ca27d23eaea3a8c87bfa0f388d.png";
 
     public static final String TMDBAPIVer = "3";
     public static final String TMDBAPImode = "discover";
@@ -14,6 +16,7 @@ public class Constants {
     public static final String TMDBWidthMed = "w185";
     public static final String TMDBWidthBig = "w500";
     public static final String TMDBWidthOrg = "original";
+    public static final String TMDBImageServerPath = "t/p";
 
     public static final String TMDBMovieType = "movie";
 

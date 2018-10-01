@@ -8,9 +8,13 @@ import java.util.Date;
 import java.util.List;
 
 public class MovieList {
+    @SerializedName("page")
     private int page;
+    @SerializedName("total_results")
     private int total_results;
+    @SerializedName("total_pages")
     private int total_pages;
+    @SerializedName("results")
     private ArrayList<ResultList> results;
 
     public int getPage() {
@@ -47,18 +51,31 @@ public class MovieList {
 
 
     public class ResultList {
+        @SerializedName("id")
         private int id;
+        @SerializedName("title")
         private String title;
-        private Date release_date;
+        @SerializedName("release_date")
+        private String release_date;
+        @SerializedName("overview")
         private String overview;
+        @SerializedName("popularity")
         private float popularity;
+        @SerializedName("vote_average")
         private float vote_average;
+        @SerializedName("vote_count")
         private int vote_count;
+        @SerializedName("original_title")
         private String original_title;
+        @SerializedName("original_language")
         private String original_language;
+        @SerializedName("video")
         private boolean video;
+        @SerializedName("adult")
         private boolean adult;
+        @SerializedName("poster_path")
         private String poster_path;
+        @SerializedName("backdrop_path")
         private String backdrop_path;
 
 
@@ -78,11 +95,11 @@ public class MovieList {
             this.title = title;
         }
 
-        public Date getRelease_date() {
+        public String getRelease_date() {
             return release_date;
         }
 
-        public void setRelease_date(Date release_date) {
+        public void setRelease_date(String release_date) {
             this.release_date = release_date;
         }
 

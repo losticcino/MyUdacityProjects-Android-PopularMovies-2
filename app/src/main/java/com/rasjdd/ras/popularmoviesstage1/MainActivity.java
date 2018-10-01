@@ -2,6 +2,8 @@ package com.rasjdd.ras.popularmoviesstage1;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -11,18 +13,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import com.rasjdd.ras.popularmoviesstage1.Models.MovieDetails;
 import com.rasjdd.ras.popularmoviesstage1.Models.MovieList;
 import com.rasjdd.ras.popularmoviesstage1.Utilities.Constants;
 import com.rasjdd.ras.popularmoviesstage1.Utilities.NetUtils;
@@ -30,9 +30,7 @@ import com.rasjdd.ras.popularmoviesstage1.Utilities.NetUtils;
 import org.json.JSONObject;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,15 +40,13 @@ public class MainActivity extends AppCompatActivity {
     private String mSortType;
     private String mSortOrder;
 
+    private RecyclerView mRecyclerView;
     private TextView mErrorMessage;
     private ProgressBar mLoadingBar;
     private ImageView mPosterView;
 
     private RequestQueue requestQueue;
-    private Gson moviesGson;
-
-    public MovieList movieList;
-
+    private Gson gson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,17 +71,19 @@ public class MainActivity extends AppCompatActivity {
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-        moviesGson = new Gson();
-
-        movieList = new MovieList();
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_posterGrid);
 
         URL mURL = NetUtils.buildAPIURL(Constants.TMDBMovieType, mPageNumber, mSortType, mSortOrder);
-        //getMovieList(mURL.toString());
+        getMovieList(mURL.toString());
+
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.serializeNulls();
+        gson = gsonBuilder.create();
 
     }
 
     private void getMovieList(String s) {
-        JsonObjectRequest listRequest = new JsonObjectRequest(Request.Method.GET, s, null, new webResponseListener(), new webErrorListener());
+        StringRequest listRequest = new StringRequest(Request.Method.GET, s, new webResponseListener(), new webErrorListener());
         requestQueue.add(listRequest);
     }
 
@@ -108,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 getMovieList(getURL.toString());
                 break;
             case R.id.menu_sort_popularity:
-                getURL = NetUtils.buildAPIURL(Constants.TMDBMovieType, 1, Constants.sortByPopularity, Constants.sortDescending);
+                getURL = NetUtils.buildAPIURL(Constants.TMDBMovieType, 871, Constants.sortByPopularity, Constants.sortDescending);
                 mErrorMessage.setVisibility(View.GONE);
                 mLoadingBar.setVisibility(View.VISIBLE);
                 getMovieList(getURL.toString());
@@ -131,15 +129,17 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private class webResponseListener implements Response.Listener<JSONObject> {
+    private class webResponseListener implements Response.Listener<String> {
 
         @Override
-        public void onResponse(JSONObject response) {
+        public void onResponse(String response) {
             mLoadingBar.setVisibility(View.GONE);
-            movieList = moviesGson.fromJson(String.valueOf(response),MovieList.class);
+            Log.e("response","success");
+            Log.e("response",response);
+            MovieList moviesList = gson.fromJson(response,MovieList.class);
             String msg = "";
 
-            for (MovieList.ResultList resultList : movieList.getResults()) {
+            for (MovieList.ResultList resultList : moviesList.getResults()) {
                 msg += (resultList.getTitle()) + "\n";
             }
 
@@ -156,6 +156,10 @@ public class MainActivity extends AppCompatActivity {
             mErrorMessage.setText(R.string.error_message);
             mErrorMessage.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void showMovieList () {
+        mErrorMessage.setVisibility(View.GONE);
     }
 
     private class MovieListObject extends JsonObjectRequest {
