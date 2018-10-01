@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             String msg = "";
 
             for (MovieList.ResultList resultList : moviesList.getResults()) {
-                msg += (resultList.getTitle()) + "\n";
+                msg += resultList.getTitle() + "  " + resultList.getPoster_path() + "\n\n";
             }
 
             mErrorMessage.setText(msg);
