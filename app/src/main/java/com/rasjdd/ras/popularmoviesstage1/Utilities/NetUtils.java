@@ -2,15 +2,7 @@ package com.rasjdd.ras.popularmoviesstage1.Utilities;
 
 import android.net.Uri;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.rasjdd.ras.popularmoviesstage1.MainActivity;
-
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 
 public class NetUtils {
@@ -89,5 +81,18 @@ public class NetUtils {
 
         return url;
     }
+
+    /*
+
+    I will implement this later when I have time to fix it...
+
+    public static void picassoGet(String imageUrl, View view){
+        if (imageUrl == null) imageUrl = Constants.TMDBLogoUrl;
+
+        Picasso.get()
+                .load(imageUrl)
+                .placeholder(R.drawable.ic_image_placeholder)
+                .into((Target) view);
+    }*/
 
 }

@@ -12,5 +12,10 @@
     <string name="sort_by">Sort By</string>
     <string name="refresh">Refresh</string>
 
+    <!-- Details Strings -->
+    <string name="details_heading_synopsis">Synopsis:</string>
+    <string name="details_heading_release">Released:</string>
+    <string name="details_heading_popularity">Current Popularity:</string>
+    <string name="details_movie_is_adult">(ADULT)</string>
     <!--  -->
 </resources>

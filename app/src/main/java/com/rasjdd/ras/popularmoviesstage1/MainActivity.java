@@ -1,40 +1,34 @@
 package com.rasjdd.ras.popularmoviesstage1;
 
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.rasjdd.ras.popularmoviesstage1.Adapters.MainViewAdapter;
+import com.rasjdd.ras.popularmoviesstage1.Models.MovieDetails;
 import com.rasjdd.ras.popularmoviesstage1.Models.MovieList;
 import com.rasjdd.ras.popularmoviesstage1.Utilities.Constants;
 import com.rasjdd.ras.popularmoviesstage1.Utilities.NetUtils;
 
-import org.json.JSONObject;
-
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements MainViewAdapter.MainAdapterOnClickHandler {
 
@@ -65,13 +59,13 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
             mSortOrder = Constants.sortDescending;
         }
 
-        mErrorMessage = (TextView) findViewById(R.id.tv_errorDisplay);
+        mErrorMessage = findViewById(R.id.tv_errorDisplay);
 
-        mLoadingBar = (ProgressBar) findViewById(R.id.pb_mainLoadScreen);
+        mLoadingBar = findViewById(R.id.pb_mainLoadScreen);
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_posterGrid);
+        mRecyclerView = findViewById(R.id.recycler_posterGrid);
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.serializeNulls();
@@ -106,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        URL getURL = null;
+        URL getURL;
 
         switch (item.getItemId()) {
             case R.id.menu_action_refresh:
@@ -117,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
                 getMovieList(getURL.toString());
                 break;
             case R.id.menu_sort_popularity:
-                getURL = NetUtils.buildAPIURL(Constants.TMDBMovieType, 871, Constants.sortByPopularity, Constants.sortDescending);
+                getURL = NetUtils.buildAPIURL(Constants.TMDBMovieType, 1, Constants.sortByPopularity, Constants.sortDescending);
                 mMainViewAdapter.setMovieList(null);
                 mErrorMessage.setVisibility(View.GONE);
                 mLoadingBar.setVisibility(View.VISIBLE);
@@ -144,12 +138,15 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
     }
 
     @Override
-    public void onClick(MovieList.ResultList result) {
-
+    public void onMovieDetailsClick(MovieDetails result) {
+        Intent detailIntent = new Intent(this, ShowMovieDetails.class);
+        detailIntent.putExtra(MovieDetails.MyParcelName, result);
+        startActivity(detailIntent);
     }
 
     private class webResponseListener implements Response.Listener<String> {
 
+        @NonNull
         @Override
         public void onResponse(String response) {
             MovieList moviesList = gson.fromJson(response,MovieList.class);
@@ -162,9 +159,10 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            mLoadingBar.setVisibility(View.GONE);
-            mErrorMessage.setText(R.string.error_message);
-            mErrorMessage.setVisibility(View.VISIBLE);
+            Toast errorToast = new Toast(getApplicationContext());
+            errorToast.setText("Cannot Fetch Data");
+            errorToast.setDuration(Toast.LENGTH_LONG);
+            errorToast.show();
         }
     }
 

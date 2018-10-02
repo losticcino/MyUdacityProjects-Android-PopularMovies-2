@@ -1,7 +1,5 @@
 package com.rasjdd.ras.popularmoviesstage1.Utilities;
 
-import com.android.volley.toolbox.StringRequest;
-
 public class Constants {
     public static final String TMDBAPIServer = "api.themoviedb.org";
     public static final String TMDBImageServer = "image.tmdb.org";

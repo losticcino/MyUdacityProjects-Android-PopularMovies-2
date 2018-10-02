@@ -1,11 +1,8 @@
 package com.rasjdd.ras.popularmoviesstage1.Models;
 
-import com.google.gson.JsonArray;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class MovieList {
     @SerializedName("page")
@@ -15,7 +12,7 @@ public class MovieList {
     @SerializedName("total_pages")
     private int total_pages;
     @SerializedName("results")
-    private ArrayList<ResultList> results;
+    private ArrayList<MovieDetails> results;
 
     public int getPage() {
         return page;
@@ -41,16 +38,16 @@ public class MovieList {
         this.total_pages = total_pages;
     }
 
-    public ArrayList<ResultList> getResults() {
+    public ArrayList<MovieDetails> getResults() {
         return results;
     }
 
-    public void setResults(ArrayList<ResultList> results) {
+    public void setResults(ArrayList<MovieDetails> results) {
         this.results = results;
     }
 
 
-    public class ResultList {
+    /*public class MovieDetails {
         @SerializedName("id")
         private int id;
         @SerializedName("title")
@@ -182,7 +179,7 @@ public class MovieList {
         public void setBackdrop_path(String backdrop_path) {
             this.backdrop_path = backdrop_path;
         }
-    }
+    }*/
 
 
 }
