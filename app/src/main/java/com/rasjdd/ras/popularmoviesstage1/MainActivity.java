@@ -159,10 +159,9 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
 
         @Override
         public void onErrorResponse(VolleyError error) {
-            Toast errorToast = new Toast(getApplicationContext());
-            errorToast.setText("Cannot Fetch Data");
-            errorToast.setDuration(Toast.LENGTH_LONG);
-            errorToast.show();
+            Toast.makeText(MainActivity.this,
+                    getString(R.string.cant_fetch_data),
+                    Toast.LENGTH_LONG).show();
         }
     }
 
