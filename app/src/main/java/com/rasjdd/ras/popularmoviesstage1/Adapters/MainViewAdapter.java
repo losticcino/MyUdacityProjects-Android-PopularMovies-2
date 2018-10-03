@@ -65,7 +65,7 @@ public class MainViewAdapter extends RecyclerView.Adapter<MainViewAdapter.MainVi
         String imageAddress = mMovieList.get(i).getPoster_path();
         String urlString = Constants.TMDBLogoUrl;
         if (imageAddress != null) {
-            URL imagePath = NetUtils.buildImageURL(Constants.TMDBWidthBig,imageAddress.substring(1));
+            URL imagePath = NetUtils.buildImageURL(Constants.TMDBPosterWidthBig,imageAddress.substring(1));
             urlString = imagePath.toString();
         }
 

@@ -9,13 +9,22 @@ public class Constants {
 
     public static final String TMDBAPIVer = "3";
     public static final String TMDBAPImode = "discover";
+    public static final String TMDBAPIQueryKeySortBy = "sort_by";
+    public static final String TMDBAPIQueryKeyPage = "page";
+    public static final String TMDBAPIQueryKeyApi = "api_key";
+    public static final String TMDBAPIQueryKeyGetRating = "rating";
+    public static final String TMDBAPIQueryKeyGetPopular = "popular";
+    public static final String TMDBAPIQueryKeyGetNowPlaying = "now_playing";
 
-    public static final String TMDBWidthSml = "w92";
-    public static final String TMDBWidthMed = "w185";
-    public static final String TMDBWidthBig = "w500";
+    public static final String TMDBPosterWidthSml = "w92";
+    public static final String TMDBPosterWidthMed = "w185";
+    public static final String TMDBPosterWidthBig = "w500";
+    public static final String TMDBBackdropWidthSml = "w300";
+    public static final String TMDBBackdropWidthMed = "w780";
+    public static final String TMDBBackdropWidthBig = "w1280";
     public static final String TMDBWidthOrg = "original";
-    public static final String TMDBImageServerPathT = "t";
-    public static final String TMDBImageServerPathP = "p";
+    public static final String TMDBImageServerPathAppend1 = "t";
+    public static final String TMDBImageServerPathAppend2 = "p";
 
     public static final String TMDBMovieType = "movie";
 

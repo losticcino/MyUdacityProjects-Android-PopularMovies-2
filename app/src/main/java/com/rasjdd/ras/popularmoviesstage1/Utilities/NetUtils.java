@@ -21,7 +21,7 @@ public class NetUtils {
 
      */
 
-    public static URL buildAPIURL(String mediaType, Integer pageNum, String sortType, String sortOrder){
+    public static URL buildAPIDiscoverURL(String mediaType, Integer pageNum, String sortType, String sortOrder){
         //Set Defaults in case they're forgotten
         if (mediaType == null) mediaType = Constants.TMDBMovieType;
         if (sortType == null) sortType = Constants.sortByPopularity;
@@ -34,9 +34,9 @@ public class NetUtils {
                 .appendPath(Constants.TMDBAPIVer)
                 .appendPath(Constants.TMDBAPImode)
                 .appendPath(mediaType)
-                .appendQueryParameter("sort_by",sortType+sortOrder)
-                .appendQueryParameter("page",pageNum.toString())
-                .appendQueryParameter("api_key", APIKeys.TheMovieDbAPIKey)
+                .appendQueryParameter(Constants.TMDBAPIQueryKeySortBy,sortType+sortOrder)
+                .appendQueryParameter(Constants.TMDBAPIQueryKeyPage,pageNum.toString())
+                .appendQueryParameter(Constants.TMDBAPIQueryKeyApi, APIKeys.TheMovieDbAPIKey)
                 .build();
 
         URL url = null;
@@ -52,14 +52,18 @@ public class NetUtils {
     public static URL buildImageURL(String imgWidth, String imagePath) {
         //Set Defaults in case they're forgotten
         URL url = null;
+
+        //Only try building a custom URL when there is a real image path pushed in.
         if (imagePath != null) {
-            if (imgWidth == null) imgWidth = Constants.TMDBWidthMed;
+            if (imgWidth == null) imgWidth = Constants.TMDBPosterWidthMed;
+            imagePath = imagePath.replace("\\", "");
+            imagePath = imagePath.replace("/", "");
 
             Uri.Builder formedURI = new Uri.Builder();
             formedURI.scheme("https")
                     .authority(Constants.TMDBImageServer)
-                    .appendPath(Constants.TMDBImageServerPathT)
-                    .appendPath(Constants.TMDBImageServerPathP)
+                    .appendPath(Constants.TMDBImageServerPathAppend1)
+                    .appendPath(Constants.TMDBImageServerPathAppend2)
                     .appendPath(imgWidth)
                     .appendPath(imagePath)
                     .build();
@@ -69,7 +73,7 @@ public class NetUtils {
                 e.printStackTrace();
             }
 
-        } else {
+        } else { //If there is an invalid string passed in, return TMDB logo URL
             Uri mURI;
             mURI = Uri.parse(Constants.TMDBLogoUrl);
             try {

@@ -34,44 +34,45 @@ public class ShowMovieDetails extends AppCompatActivity {
         Intent parentIntent = getIntent();
 
         if (parentIntent != null) {
+            URL url;
             String isAdult = "";
             MovieDetails mSelectedMovie = parentIntent.getParcelableExtra(MovieDetails.MyParcelName);
-            if (mSelectedMovie.isAdult() == false) isAdult += " | (ADULT)";
+            if (mSelectedMovie.isAdult()) isAdult += " | " + getString(R.string.details_movie_is_adult);
 
             mTitle.setText(mSelectedMovie.getTitle());
-            mRating.setText(String.valueOf("Rating: " + mSelectedMovie.getVote_average()));
-            mPopularity.setText(String.valueOf("Popularity: " + mSelectedMovie.getPopularity()));
-            mMoreInfo.setText(new StringBuilder(
-                    "Released: " + mSelectedMovie.getRelease_date()
-                            + " | " + mSelectedMovie.getOriginal_language() + isAdult));
+
+            //Set Voter Rating
+            mRating.setText(String.valueOf(mSelectedMovie.getVote_average()));
+
+            //Set Popularity
+            mPopularity.setText(String.valueOf(mSelectedMovie.getPopularity()));
+
+            //Set Extra info ~~ date | lang | ?adult
+            mMoreInfo.setText(new StringBuilder(getString(R.string.details_heading_release)
+                    + ": " + mSelectedMovie.getRelease_date()
+                    + " | " + mSelectedMovie.getOriginal_language() + isAdult));
+
+            //Set Synopsis info
             mSynopsis.setText(mSelectedMovie.getOverview());
 
-            URL url;
-            String imageUrl;
-            if (mSelectedMovie.getBackdrop_path() != null) {
-                String s = mSelectedMovie.getBackdrop_path();
-                url = NetUtils.buildImageURL(Constants.TMDBWidthBig,s.substring(1));
-                imageUrl = url.toString();
-            } else imageUrl = Constants.TMDBLogoUrl;
+            //Build Backdrop URL
+            url = NetUtils.buildImageURL(Constants.TMDBBackdropWidthBig,mSelectedMovie.getBackdrop_path());
 
             // TODO Convert Picasso to a macro...
             //NetUtils.picassoGet(urlString, mainViewAdapterViewHolder.mainViewImageView);
 
             Picasso.get()
-                    .load(imageUrl)
+                    .load(url.toString())
                     .placeholder(R.drawable.ic_image_placeholder)
                     .into(mBackdrop);
 
-            if (mSelectedMovie.getPoster_path() != null) {
-                String s = mSelectedMovie.getPoster_path();
-                url = NetUtils.buildImageURL(Constants.TMDBWidthBig,s.substring(1));
-                imageUrl = url.toString();
-            } else imageUrl = Constants.TMDBLogoUrl;
+            //Build Poster URL
+            url = NetUtils.buildImageURL(Constants.TMDBPosterWidthBig,mSelectedMovie.getPoster_path());
 
             //NetUtils.picassoGet(urlString, mainViewAdapterViewHolder.mainViewImageView);
 
             Picasso.get()
-                    .load(imageUrl)
+                    .load(url.toString())
                     .placeholder(R.drawable.ic_image_placeholder)
                     .into(mPoster);
 
