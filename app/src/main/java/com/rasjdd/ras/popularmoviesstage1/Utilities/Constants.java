@@ -12,7 +12,7 @@ public class Constants {
     public static final String TMDBAPIQueryKeySortBy = "sort_by";
     public static final String TMDBAPIQueryKeyPage = "page";
     public static final String TMDBAPIQueryKeyApi = "api_key";
-    public static final String TMDBAPIQueryKeyGetRating = "rating";
+    public static final String TMDBAPIQueryKeyGetRating = "top_rated";
     public static final String TMDBAPIQueryKeyGetPopular = "popular";
     public static final String TMDBAPIQueryKeyGetNowPlaying = "now_playing";
 

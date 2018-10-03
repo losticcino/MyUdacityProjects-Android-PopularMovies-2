@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
             mPageNumber = 1;
         }
         if (mSortType == null) {
-            mSortType = Constants.sortByPopularity;
+            mSortType = Constants.TMDBAPIQueryKeyGetPopular;
         }
         if (mSortOrder == null) {
             mSortOrder = Constants.sortDescending;
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
 
         mRecyclerView.setAdapter(mMainViewAdapter);
 
-        URL mURL = NetUtils.buildAPIDiscoverURL(Constants.TMDBMovieType, mPageNumber, mSortType, mSortOrder);
+        URL mURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, mPageNumber, mSortType, mSortOrder);
         getMovieList(mURL.toString());
     }
 
@@ -101,31 +101,35 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         URL getURL;
+        // TODO Change Query Keys back to use the Discover entry point since it provides much more capability.
 
         switch (item.getItemId()) {
             case R.id.menu_action_refresh:
-                getURL = NetUtils.buildAPIDiscoverURL(Constants.TMDBMovieType, mPageNumber, mSortType, mSortOrder);
+                getURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, mPageNumber, mSortType, mSortOrder);
                 mMainViewAdapter.setMovieList(null);
                 mErrorMessage.setVisibility(View.GONE);
                 mLoadingBar.setVisibility(View.VISIBLE);
                 getMovieList(getURL.toString());
                 break;
             case R.id.menu_sort_popularity:
-                getURL = NetUtils.buildAPIDiscoverURL(Constants.TMDBMovieType, 1, Constants.sortByPopularity, Constants.sortDescending);
+                getURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, 1, Constants.TMDBAPIQueryKeyGetPopular, null);
+                mSortType = Constants.TMDBAPIQueryKeyGetPopular;
                 mMainViewAdapter.setMovieList(null);
                 mErrorMessage.setVisibility(View.GONE);
                 mLoadingBar.setVisibility(View.VISIBLE);
                 getMovieList(getURL.toString());
                 break;
             case R.id.menu_sort_rating:
-                getURL = NetUtils.buildAPIDiscoverURL(Constants.TMDBMovieType, 1, Constants.sortByRating, Constants.sortDescending);
+                getURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, 1, Constants.TMDBAPIQueryKeyGetRating, null);
+                mSortType = Constants.TMDBAPIQueryKeyGetRating;
                 mMainViewAdapter.setMovieList(null);
                 mErrorMessage.setVisibility(View.GONE);
                 mLoadingBar.setVisibility(View.VISIBLE);
                 getMovieList(getURL.toString());
                 break;
             case R.id.menu_sort_name:
-                getURL = NetUtils.buildAPIDiscoverURL(Constants.TMDBMovieType, 1, Constants.sortByTitle, Constants.sortAscending);
+                getURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, 1, Constants.TMDBAPIQueryKeyGetNowPlaying, null);
+                mSortType = Constants.TMDBAPIQueryKeyGetNowPlaying;
                 mMainViewAdapter.setMovieList(null);
                 mErrorMessage.setVisibility(View.GONE);
                 mLoadingBar.setVisibility(View.VISIBLE);

@@ -7,9 +7,9 @@
     <string name="cant_fetch_data">Can not Fetch Data</string>
 
     <!-- Menu Strings -->
-    <string name="sortBy_popularity">Sort By Popularity</string>
-    <string name="sortBy_rating">Sort By Rating</string>
-    <string name="sortBy_name">Sort By Name</string>
+    <string name="sortBy_popularity">Most Popular</string>
+    <string name="sortBy_rating">Top Rated</string>
+    <string name="sortBy_name">Now Playing</string>
     <string name="sort_by">Sort By</string>
     <string name="refresh">Refresh</string>
 

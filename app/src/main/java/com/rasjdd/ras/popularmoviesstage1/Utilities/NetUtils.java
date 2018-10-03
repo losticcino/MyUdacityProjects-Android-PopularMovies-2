@@ -49,6 +49,32 @@ public class NetUtils {
         return url;
     }
 
+    public static URL buildAPIGetURL(String mediaType, Integer pageNum, String sortType, String sortOrder){
+        //Set Defaults in case they're forgotten
+        if (mediaType == null) mediaType = Constants.TMDBMovieType;
+        if (sortType == null) sortType = Constants.TMDBAPIQueryKeyGetPopular;
+        if (sortOrder == null) sortOrder = Constants.sortDescending;
+        if (pageNum == null || pageNum <= 1) pageNum = 1;
+
+        Uri.Builder formedURI = new Uri.Builder();
+        formedURI.scheme("https")
+                .authority(Constants.TMDBAPIServer)
+                .appendPath(Constants.TMDBAPIVer)
+                .appendPath(mediaType)
+                .appendPath(sortType)
+                .appendQueryParameter(Constants.TMDBAPIQueryKeyApi, APIKeys.TheMovieDbAPIKey)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(formedURI.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
     public static URL buildImageURL(String imgWidth, String imagePath) {
         //Set Defaults in case they're forgotten
         URL url = null;
