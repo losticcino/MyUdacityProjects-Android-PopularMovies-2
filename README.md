@@ -30,3 +30,14 @@ By building this app, you will demonstrate your understanding of the foundationa
 * You will use adapters and custom list layouts to populate list views.
 * You will incorporate libraries to simplify the amount of code you need to write
 * Ready to start building? Click "Next" for instructions!
+
+****READ ME REGARDING API KEY****
+
+   To avoid accidental uploading of an API key, I created a class which is ignored by git-commit.
+    The class name is "APIKeys"
+    The class reads as follows:
+    public class APIKeys {
+        public static final String TheMovieDbAPIKey = "(API KEY)";
+    }
+    
+    Without this class, the app will not run.  Make sure you do this if you want to run.
