@@ -36,8 +36,11 @@ By building this app, you will demonstrate your understanding of the foundationa
    To avoid accidental uploading of an API key, I created a class which is ignored by git-commit.
     The class name is "APIKeys"
     The class reads as follows:
+    
+    ```
     public class APIKeys {
         public static final String TheMovieDbAPIKey = "(API KEY)";
     }
+    ```
     
     Without this class, the app will not run.  Make sure you do this if you want to run.
