@@ -14,7 +14,6 @@ import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.Window;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -31,9 +30,9 @@ import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.MovieListDetailRes
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.Review;
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.Video;
 import com.rasjdd.ras.popularmoviesstage2.Models.MovieDetails;
-import com.rasjdd.ras.popularmoviesstage2.databinding.DetailLayoutBinding;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.Constants;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.NetUtils;
+import com.rasjdd.ras.popularmoviesstage2.databinding.DetailLayoutBinding;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
@@ -181,15 +180,18 @@ public class ShowMovieDetails extends AppCompatActivity implements
                 detailView.recyclerTrailerSpinnerView.setVisibility(View.VISIBLE);
                 GridLayoutManager trailerManager = (GridLayoutManager) detailView.recyclerTrailerSpinnerView.getLayoutManager();
                 trailerManager.setSpanCount(trailerList.size());
-                detailView.recyclerTrailerSpinnerView.setLayoutManager(trailerManager);
                 trailerSpinnerAdapter.setTrailerList(trailerList);
             }
 
             if (null != movieDetails.getReviewList()){
-                ArrayList<Review> reviewList = movieDetails.getReviewList().getResults();
-                detailView.lblNoResults.setVisibility(View.GONE);
-                detailView.recyclerReviewSpinner.setVisibility(View.VISIBLE);
-                reviewSpinnerAdapter.setReviewList(reviewList);
+                if (movieDetails.getReviewList().getTotalResults() > 0) {
+                    GridLayoutManager reviewManager = (GridLayoutManager) detailView.recyclerReviewSpinner.getLayoutManager();
+                    reviewManager.setSpanCount(movieDetails.getReviewList().getTotalResults());
+                    ArrayList<Review> reviewList = movieDetails.getReviewList().getResults();
+                    detailView.lblNoResults.setVisibility(View.GONE);
+                    detailView.recyclerReviewSpinner.setVisibility(View.VISIBLE);
+                    reviewSpinnerAdapter.setReviewList(reviewList);
+                }
             }
         }
     }

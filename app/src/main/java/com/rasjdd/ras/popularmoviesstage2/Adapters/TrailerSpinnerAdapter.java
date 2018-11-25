@@ -1,6 +1,5 @@
 package com.rasjdd.ras.popularmoviesstage2.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +8,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.Video;
 import com.rasjdd.ras.popularmoviesstage2.R;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.Constants;
@@ -32,20 +33,21 @@ public class TrailerSpinnerAdapter extends RecyclerView.Adapter<TrailerSpinnerAd
         mClickHandler = clickHandler;
     }
 
-    public class TrailerSpinnerViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
-        private final ImageView trailerImageView;
-
-        public TrailerSpinnerViewHolder(View itemView) {
-            super(itemView);
-            trailerImageView = itemView.findViewById(R.id.imageTrailerPoster);
-            itemView.setOnClickListener(this);
+    @Override
+    public void onBindViewHolder(@NonNull TrailerSpinnerViewHolder trailerSpinnerViewHolder, int i) {
+        String videoIdentifier = mVideoList.get(i).getKey();
+        String urlString = Constants.TMDBLogoUrl;
+        if (videoIdentifier != null) {
+            URL imagePath = NetUtils.buildYouTubeThumbnailURL(videoIdentifier);
+            urlString = imagePath.toString();
         }
 
-        @Override
-        public void onClick(View v) {
-            Video mResult = mVideoList.get(getAdapterPosition());
-            mClickHandler.onTrailerDetailsClick(mResult);
-        }
+        trailerSpinnerViewHolder.trailerTypeHeader.setText(mVideoList.get(i).getType());
+        Picasso.get()
+                .load(urlString)
+                .placeholder(R.drawable.ic_image_placeholder)
+                .into(trailerSpinnerViewHolder.trailerImageView);
+
     }
 
     @NonNull
@@ -60,20 +62,22 @@ public class TrailerSpinnerAdapter extends RecyclerView.Adapter<TrailerSpinnerAd
         return new TrailerSpinnerViewHolder(view);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull TrailerSpinnerViewHolder trailerSpinnerViewHolder, int i) {
-        String videoIdentifier = mVideoList.get(i).getKey();
-        String urlString = Constants.TMDBLogoUrl;
-        if (videoIdentifier != null) {
-            URL imagePath = NetUtils.buildYouTubeThumbnailURL(videoIdentifier);
-            urlString = imagePath.toString();
+    public class TrailerSpinnerViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
+        private final ImageView trailerImageView;
+        private final TextView trailerTypeHeader;
+
+        public TrailerSpinnerViewHolder(View itemView) {
+            super(itemView);
+            trailerTypeHeader = itemView.findViewById(R.id.contentTrailerHeader);
+            trailerImageView = itemView.findViewById(R.id.imageTrailerPoster);
+            itemView.setOnClickListener(this);
         }
 
-        Picasso.get()
-                .load(urlString)
-                .placeholder(R.drawable.ic_image_placeholder)
-                .into(trailerSpinnerViewHolder.trailerImageView);
-
+        @Override
+        public void onClick(View v) {
+            Video mResult = mVideoList.get(getAdapterPosition());
+            mClickHandler.onTrailerDetailsClick(mResult);
+        }
     }
 
     public int getItemCount() {

@@ -7,17 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.Review;
-import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.Video;
 import com.rasjdd.ras.popularmoviesstage2.R;
-import com.rasjdd.ras.popularmoviesstage2.Utilities.Constants;
-import com.rasjdd.ras.popularmoviesstage2.Utilities.NetUtils;
-import com.squareup.picasso.Picasso;
 
-import java.net.URL;
 import java.util.ArrayList;
 
 public class ReviewSpinnerAdapter extends RecyclerView.Adapter<ReviewSpinnerAdapter.ReviewViewAdapterViewHolder> {
@@ -34,22 +28,13 @@ public class ReviewSpinnerAdapter extends RecyclerView.Adapter<ReviewSpinnerAdap
         mClickHandler = clickHandler;
     }
 
-    public class ReviewViewAdapterViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
-        private final TextView authorView;
-        private final TextView contentView;
-
-        public ReviewViewAdapterViewHolder(View itemView) {
-            super(itemView);
-            authorView = itemView.findViewById(R.id.contentAuthor);
-            contentView = itemView.findViewById(R.id.contentReview);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            Review mResult = mReviewList.get(getAdapterPosition());
-            mClickHandler.onReviewClick(mResult);
-        }
+    @Override
+    public void onBindViewHolder(@NonNull ReviewViewAdapterViewHolder reviewViewAdapterViewHolder, int i) {
+        String authorString = "- \"" + mReviewList.get(i).getAuthor() + "\"";
+        reviewViewAdapterViewHolder.authorView.setText(authorString);
+        if (mReviewList.get(i).getContent().length() <= 450)
+            reviewViewAdapterViewHolder.moreInfoView.setVisibility(View.GONE);
+        reviewViewAdapterViewHolder.contentView.setText(mReviewList.get(i).getContent());
     }
 
     @NonNull
@@ -64,10 +49,24 @@ public class ReviewSpinnerAdapter extends RecyclerView.Adapter<ReviewSpinnerAdap
         return new ReviewViewAdapterViewHolder(view);
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull ReviewViewAdapterViewHolder reviewViewAdapterViewHolder, int i) {
-        reviewViewAdapterViewHolder.contentView.setText(mReviewList.get(i).getAuthor());
-        reviewViewAdapterViewHolder.contentView.setText(mReviewList.get(i).getContent());
+    public class ReviewViewAdapterViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
+        private final TextView authorView;
+        private final TextView contentView;
+        private final TextView moreInfoView;
+
+        public ReviewViewAdapterViewHolder(View itemView) {
+            super(itemView);
+            moreInfoView = itemView.findViewById(R.id.lblMoreReview);
+            authorView = itemView.findViewById(R.id.contentAuthor);
+            contentView = itemView.findViewById(R.id.contentReview);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Review mResult = mReviewList.get(getAdapterPosition());
+            mClickHandler.onReviewClick(mResult);
+        }
     }
 
     public int getItemCount() {
