@@ -1,4 +1,4 @@
-package com.rasjdd.ras.popularmoviesstage1;
+package com.rasjdd.ras.popularmoviesstage2;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

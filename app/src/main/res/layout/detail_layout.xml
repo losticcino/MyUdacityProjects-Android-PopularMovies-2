@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- TODO General improvement of the look/feel of Movie Details information -->
+
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" >
+
+    <ScrollView
+        android:id="@+id/DetailParentScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorDVTextBackground" >
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/movie_details_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ShowMovieDetails" >
+            <ImageView
+                android:id="@+id/imageBackdrop"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:maxHeight="@dimen/DetailBackdropHeight"
+                android:contentDescription="@string/loading_message"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="2.5"
+                app:layout_constraintTop_toTopOf="parent" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/btnFavoriteButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_fav_off"
+                android:clickable="true"
+                android:layout_margin="16dp"
+                android:scaleType="fitXY"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/imageBackdrop"
+                app:layout_constraintTop_toBottomOf="@id/imageBackdrop" />
+
+            <TextView
+                android:id="@+id/contentTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/imagePoster"
+                style="@style/TextMarginAndPaddingDefault"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imagePoster"
+                app:layout_constraintTop_toBottomOf="@id/imageBackdrop" />
+
+            <TextView
+                android:id="@+id/hBreak1"
+                style="@style/DetailSpacer"
+                app:layout_constraintTop_toBottomOf="@id/contentTitle" />
+
+            <TextView
+                android:id="@+id/contentRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/DetailTextStandard"
+                android:layout_below="@id/contentTitle"
+                android:layout_toRightOf="@id/imagePoster"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toRightOf="@id/imagePoster"
+                app:layout_constraintTop_toBottomOf="@+id/hBreak1" />
+
+            <TextView
+                android:id="@+id/contentPopularity"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                style="@style/DetailTextStandard"
+                android:layout_below="@id/contentRating"
+                android:layout_toRightOf="@id/imagePoster"
+                android:gravity="bottom"
+                app:layout_constraintBottom_toBottomOf="@+id/contentRating"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/contentRating"
+                app:layout_constraintTop_toTopOf="@+id/contentRating" />
+
+            <ImageView
+                android:id="@+id/imagePoster"
+                android:layout_width="150dp"
+                android:layout_height="250dp"
+                android:layout_marginTop="150dp"
+                android:contentDescription="@string/loading_message"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="@id/contentRating"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteX="0dp" />
+
+            <TextView
+                android:id="@+id/hBreak2"
+                style="@style/DetailSpacer"
+                app:layout_constraintTop_toBottomOf="@id/imagePoster" />
+
+            <TextView
+                android:id="@+id/contentMoreInfo"
+                android:layout_width="match_parent"
+                android:layout_height="30sp"
+                style="@style/DetailTextStandard"
+                app:layout_constraintTop_toBottomOf="@+id/hBreak2" />
+
+            <TextView
+                android:id="@+id/hBreak3"
+                style="@style/DetailSpacer"
+                app:layout_constraintTop_toBottomOf="@id/contentMoreInfo" />
+
+            <HorizontalScrollView
+                android:id="@+id/viewTrailerSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                app:layout_constraintTop_toBottomOf="@id/contentMoreInfo" >
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerTrailerSpinnerView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/hBreak4"
+                style="@style/DetailSpacer"
+                app:layout_constraintTop_toBottomOf="@id/viewTrailerSpinner" />
+
+            <TextView
+                android:id="@+id/contentSynopsis"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                style="@style/DetailTextStandard"
+                app:layout_constraintTop_toBottomOf="@+id/hBreak4" />
+
+            <TextView
+                android:id="@+id/hBreak5"
+                style="@style/DetailSpacer"
+                app:layout_constraintTop_toBottomOf="@id/contentSynopsis" />
+
+            <HorizontalScrollView
+                android:id="@+id/viewReviewSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                app:layout_constraintTop_toBottomOf="@id/hBreak5" >
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerReviewSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/lblNoResults"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/DetailTextStandard"
+                android:gravity="center"
+                android:text="@string/details_no_reviews"
+                app:layout_constraintTop_toBottomOf="@id/hBreak5" />
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+</layout>

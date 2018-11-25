@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#2196f3</color>
+    <color name="colorPrimaryDark">#1976d2</color>
+    <color name="colorAccent">#e040fb</color>
+    <color name="colorPrimaryLight">#bbdefb</color>
+    <color name="colorText">#212121</color>
+    <color name="colorTextAlt">#757575</color>
+    <color name="colorIcon">#FFFFFF</color>
+    <color name="colorDividers">#BDBDBD</color>
+
+    <color name="colorGood">#00c853</color>
+    <color name="colorBad">#ff0000</color>
+
+    <!-- DetailView Specific Colors -->
+    <color name="colorDVTextBackground">#fafafa</color>
+    <color name="colorDVSpacer">#9e9e9e</color>
 </resources>

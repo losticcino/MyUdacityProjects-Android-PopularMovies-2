@@ -1,13 +1,13 @@
-package com.rasjdd.ras.popularmoviesstage1.Models;
+package com.rasjdd.ras.popularmoviesstage2.Models.DetailModels;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-public class MovieDetails implements Parcelable {
+public class MovieListDetailResponse implements Parcelable {
 
-    public static final String MyParcelName = "MovieDetails";
+    public static final String MyParcelName = "MovieListDetailResponse";
 
     @SerializedName("id")
     private int id;
@@ -37,7 +37,7 @@ public class MovieDetails implements Parcelable {
     private String backdrop_path;
 
 
-    protected MovieDetails(Parcel in) {
+    protected MovieListDetailResponse(Parcel in) {
         id = in.readInt();
         title = in.readString();
         release_date = in.readString();
@@ -53,15 +53,15 @@ public class MovieDetails implements Parcelable {
         backdrop_path = in.readString();
     }
 
-    public static final Creator<MovieDetails> CREATOR = new Creator<MovieDetails>() {
+    public static final Creator<MovieListDetailResponse> CREATOR = new Creator<MovieListDetailResponse>() {
         @Override
-        public MovieDetails createFromParcel(Parcel in) {
-            return new MovieDetails(in);
+        public MovieListDetailResponse createFromParcel(Parcel in) {
+            return new MovieListDetailResponse(in);
         }
 
         @Override
-        public MovieDetails[] newArray(int size) {
-            return new MovieDetails[size];
+        public MovieListDetailResponse[] newArray(int size) {
+            return new MovieListDetailResponse[size];
         }
     };
 

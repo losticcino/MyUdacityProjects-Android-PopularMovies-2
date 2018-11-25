@@ -1,4 +1,4 @@
-package com.rasjdd.ras.popularmoviesstage1.Adapters;
+package com.rasjdd.ras.popularmoviesstage2.Adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,10 +9,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.rasjdd.ras.popularmoviesstage1.Models.MovieDetails;
-import com.rasjdd.ras.popularmoviesstage1.R;
-import com.rasjdd.ras.popularmoviesstage1.Utilities.Constants;
-import com.rasjdd.ras.popularmoviesstage1.Utilities.NetUtils;
+import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.MovieListDetailResponse;
+import com.rasjdd.ras.popularmoviesstage2.R;
+import com.rasjdd.ras.popularmoviesstage2.Utilities.Constants;
+import com.rasjdd.ras.popularmoviesstage2.Utilities.NetUtils;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
@@ -20,12 +20,12 @@ import java.util.ArrayList;
 
 public class MainViewAdapter extends RecyclerView.Adapter<MainViewAdapter.MainViewAdapterViewHolder> {
 
-    private ArrayList<MovieDetails> mMovieList;
+    private ArrayList<MovieListDetailResponse> mMovieList;
 
     private final MainAdapterOnClickHandler mClickHandler;
 
     public interface MainAdapterOnClickHandler {
-        void onMovieDetailsClick(MovieDetails result);
+        void onMovieDetailsClick(MovieListDetailResponse result);
     }
 
     public MainViewAdapter(MainAdapterOnClickHandler clickHandler) {
@@ -37,13 +37,14 @@ public class MainViewAdapter extends RecyclerView.Adapter<MainViewAdapter.MainVi
 
         public MainViewAdapterViewHolder(View itemView) {
             super(itemView);
-            mainViewImageView = itemView.findViewById(R.id.iv_gallery_poster);
+            mainViewImageView = itemView.findViewById(R.id.imageGalleryPoster);
+            int position = getAdapterPosition();
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            MovieDetails mResult = mMovieList.get(getAdapterPosition());
+            MovieListDetailResponse mResult = mMovieList.get(getAdapterPosition());
             mClickHandler.onMovieDetailsClick(mResult);
         }
     }
@@ -83,7 +84,7 @@ public class MainViewAdapter extends RecyclerView.Adapter<MainViewAdapter.MainVi
         return mMovieList.size();
     }
 
-    public void setMovieList(ArrayList<MovieDetails> results) {
+    public void setMovieList(ArrayList<MovieListDetailResponse> results) {
         mMovieList = results;
         notifyDataSetChanged();
     }

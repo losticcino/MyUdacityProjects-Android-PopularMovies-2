@@ -1,4 +1,4 @@
-package com.rasjdd.ras.popularmoviesstage1.Utilities;
+package com.rasjdd.ras.popularmoviesstage2.Utilities;
 
 import android.net.Uri;
 
@@ -112,17 +112,72 @@ public class NetUtils {
         return url;
     }
 
-    /*
+    public static URL buildMediaDetailUrl(String mediaType,String sID) {
+        // Set defaults in the case of forgotten inputs
+        if (mediaType == null) mediaType = Constants.TMDBMovieType;
+        // In case the ID is forgotten, return a default movie to prevent bad URLS
+        // TODO pick a random movie from a list of more than just one...
+        if (sID == null) sID = "9255"; // For now, just return Hot Shots! Part Deux for its cover image.
 
-    I will implement this later when I have time to fix it...
+        String appends = Constants.TMDBDetailVideos + ","
+                + Constants.TMDBDetailReviews;
 
-    public static void picassoGet(String imageUrl, View view){
-        if (imageUrl == null) imageUrl = Constants.TMDBLogoUrl;
+        Uri.Builder formedURI = new Uri.Builder();
 
-        Picasso.get()
-                .load(imageUrl)
-                .placeholder(R.drawable.ic_image_placeholder)
-                .into((Target) view);
-    }*/
+        formedURI.scheme("https")
+                .authority(Constants.TMDBAPIServer)
+                .appendPath(Constants.TMDBAPIVer)
+                .appendPath(mediaType)
+                .appendPath(sID)
+                .appendQueryParameter(Constants.TMDBAPIQueryKeyApi, APIKeys.TheMovieDbAPIKey)
+                .appendQueryParameter(Constants.TMDBAPIQueryAppendToResponse, appends)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(formedURI.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static URL buildYouTubeThumbnailURL(String videoIdentifier){
+        if (null == videoIdentifier) videoIdentifier = Constants.YouTubeRickRoll;
+
+        Uri.Builder formedURI = new Uri.Builder();
+        formedURI.scheme("https")
+                .authority(Constants.YouTubeThumbnailServer)
+                .appendPath(Constants.YouTubeThumbnailLink1)
+                .appendPath(videoIdentifier)
+                .appendPath(Constants.YouTubeThumbnailResource)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(formedURI.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static Uri buildYouTubeWatchURI(String videoIdentifier){
+        if (null == videoIdentifier) videoIdentifier = Constants.YouTubeRickRoll;
+
+        Uri.Builder formedURI = new Uri.Builder();
+        formedURI.scheme("https")
+                .authority(Constants.YouTubeWatchServer)
+                .appendPath(Constants.YouTubeWatchLink1)
+                .appendPath(videoIdentifier)
+                .appendPath(Constants.YouTubeThumbnailResource)
+                .appendQueryParameter(Constants.YouTubeWatchQueryKey, videoIdentifier);
+
+        Uri uri = formedURI.build();
+
+        return uri;
+    }
 
 }

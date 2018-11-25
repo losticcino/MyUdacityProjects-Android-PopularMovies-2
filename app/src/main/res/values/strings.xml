@@ -1,7 +1,7 @@
 <resources>
     <!--  -->
     <!-- Main App Strings -->
-    <string name="app_name">Popular Movies Stage 1</string>
+    <string name="app_name">movInformer</string>
     <string name="loading_message">Loading...</string>
     <string name="error_message">An Error Has Occurred.</string>
     <string name="cant_fetch_data">Can not Fetch Data</string>
@@ -19,6 +19,7 @@
     <string name="details_heading_popularity">Current Popularity:</string>
     <string name="details_heading_rating">Rating</string>
     <string name="details_movie_is_adult">(ADULT)</string>
+    <string name="details_no_reviews">There are no reviews yet.</string>
 
     <!--  -->
 </resources>
