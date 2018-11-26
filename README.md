@@ -23,7 +23,8 @@ Screen showing details from a individual film
 ## READ ME REGARDING API KEY
 
 To avoid accidental uploading of an API key, I created a class which is ignored by git-commit.
-The class name is "APIKeys"
+The class is in the "Utilities" package.
+The class name is "APIKeys".
 The class reads as follows:
 
 
