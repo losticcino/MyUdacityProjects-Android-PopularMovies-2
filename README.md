@@ -1,6 +1,6 @@
 # MyUdacityProjects-Android-PopularMovies-2
 
-**Project Overview**
+### **Project Overview**
 
 Welcome back to Popular Movies! In this second and final stage, you’ll add additional functionality to the app you built in Stage 1.
 
@@ -27,9 +27,11 @@ The class name is "APIKeys"
 The class reads as follows:
 
 
+```
 public class APIKeys {
     public static final String TheMovieDbAPIKey = "(API KEY)";
 }
+```
 
 
 Without this class, the app will not run.  Make sure you do this if you want to run.
