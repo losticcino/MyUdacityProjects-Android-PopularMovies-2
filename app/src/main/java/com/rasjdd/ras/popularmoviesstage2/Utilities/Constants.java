@@ -1,6 +1,11 @@
 package com.rasjdd.ras.popularmoviesstage2.Utilities;
 
+import android.content.res.Resources;
+
+import com.rasjdd.ras.popularmoviesstage2.R;
+
 import java.security.PublicKey;
+import java.util.Random;
 
 public class Constants {
     public static final String TMDBAPIServer = "api.themoviedb.org";
@@ -48,7 +53,13 @@ public class Constants {
     public static final String YouTubeThumbnailServer = "img.youtube.com";
     public static final String YouTubeThumbnailLink1 = "vi";
     public static final String YouTubeThumbnailResource = "0.jpg";
-    public static final String YouTubeRickRoll = "dQw4w9WgXcQ";
     public static final String YouTubeWatchLink1 = "watch";
     public static final String YouTubeWatchQueryKey = "v";
+
+
+    public static String RandomYoutubeIdentifier() {
+        String[] ytIDArray = Resources.getSystem().getStringArray(R.array.youtube_default_IDs);
+        String videoIdentifier = ytIDArray[new Random().nextInt(ytIDArray.length)];
+        return videoIdentifier;
+    }
 }

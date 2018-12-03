@@ -1,9 +1,13 @@
 package com.rasjdd.ras.popularmoviesstage2.Utilities;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import static com.rasjdd.ras.popularmoviesstage2.Utilities.Constants.RandomYoutubeIdentifier;
 
 public class NetUtils {
 
@@ -144,7 +148,7 @@ public class NetUtils {
     }
 
     public static URL buildYouTubeThumbnailURL(String videoIdentifier){
-        if (null == videoIdentifier) videoIdentifier = Constants.YouTubeRickRoll;
+        if (null == videoIdentifier) videoIdentifier = RandomYoutubeIdentifier();
 
         Uri.Builder formedURI = new Uri.Builder();
         formedURI.scheme("https")
@@ -165,7 +169,7 @@ public class NetUtils {
     }
 
     public static Uri buildYouTubeWatchURI(String videoIdentifier){
-        if (null == videoIdentifier) videoIdentifier = Constants.YouTubeRickRoll;
+        if (null == videoIdentifier) videoIdentifier = RandomYoutubeIdentifier();
 
         Uri.Builder formedURI = new Uri.Builder();
         formedURI.scheme("https")
@@ -180,4 +184,13 @@ public class NetUtils {
         return uri;
     }
 
+    public static boolean testConnectivityBasic(Context context){
+        ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if ((connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE )) != null
+                && connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected()) return true;
+        else if ((connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI )) != null
+                && connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()) return true;
+
+        return false;
+    }
 }

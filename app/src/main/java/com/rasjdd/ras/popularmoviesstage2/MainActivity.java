@@ -86,9 +86,16 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
     }
 
     private void getMovieList(String s) {
-        StringRequest listRequest = new StringRequest(Request.Method.GET, s, new webResponseListener(), new webErrorListener());
-        requestQueue.add(listRequest);
-        mainBinding.staticLoadingScreen.setVisibility(View.VISIBLE);
+        if (NetUtils.testConnectivityBasic(this)) {
+            StringRequest listRequest = new StringRequest(Request.Method.GET, s, new webResponseListener(), new webErrorListener());
+            requestQueue.add(listRequest);
+            mainBinding.staticLoadingScreen.setVisibility(View.VISIBLE);
+        }
+        else {
+            Toast.makeText(this,
+                    getString(R.string.no_connectivity),
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
