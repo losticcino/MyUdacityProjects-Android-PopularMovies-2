@@ -16,4 +16,5 @@
     <color name="colorDVTextBackground">#fafafa</color>
     <color name="colorDVCardBackground">#fffde7</color>
     <color name="colorDVSpacer">#9e9e9e</color>
+    <color name="colorRVCardBackground">#FFFFA5</color>
 </resources>

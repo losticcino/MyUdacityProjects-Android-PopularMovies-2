@@ -9,13 +9,14 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Dao
 public interface MovieDAO {
 
-    @Query("SELECT * FROM FavMovie ORDER BY DateAdded")
-    LiveData<List<FavoriteMovieDetails>> loadAllFavMovies();
+    @Query("SELECT * FROM FavMovie ORDER BY release_date")
+    ArrayList<FavoriteMovieDetails> loadAllFavMovies();
 
     @Insert
     void insertFavMovie(FavoriteMovieDetails favoriteMovieDetails);
@@ -27,5 +28,5 @@ public interface MovieDAO {
     void deleteFavMovie(FavoriteMovieDetails favoriteMovieDetails);
 
     @Query("SELECT * FROM FavMovie WHERE id = :id")
-    LiveData<FavoriteMovieDetails> loadFavMovieById(int id);
+    FavoriteMovieDetails loadFavMovieById(int id);
 }

@@ -56,10 +56,12 @@ public class Constants {
     public static final String YouTubeWatchLink1 = "watch";
     public static final String YouTubeWatchQueryKey = "v";
 
-
     public static String RandomYoutubeIdentifier() {
         String[] ytIDArray = Resources.getSystem().getStringArray(R.array.youtube_default_IDs);
         String videoIdentifier = ytIDArray[new Random().nextInt(ytIDArray.length)];
         return videoIdentifier;
     }
+
+    //Internal Constants
+    public static final String sortByFavorites = "favorites";
 }

@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.GridLayoutManager;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -25,6 +26,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.rasjdd.ras.popularmoviesstage2.Adapters.MainViewAdapter;
+import com.rasjdd.ras.popularmoviesstage2.DatabaseFunctions.FavoriteMoviesDatabase;
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.MovieListDetailResponse;
 import com.rasjdd.ras.popularmoviesstage2.Models.MovieList;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.Constants;
@@ -49,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
     private Gson gMovieList;
 
     ActivityMainBinding mainBinding;
+
+    private FavoriteMoviesDatabase mFavMovies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
         mainBinding.recyclerPosterGrid.setAdapter(mMainViewAdapter);
 
         URL mURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, mPageNumber, mSortType, mSortOrder);
+        // mFavMovies.movieDAO().loadAllFavMovies();
         getMovieList(mURL.toString());
     }
 
@@ -117,6 +122,12 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
                 mainBinding.staticErrorDisplay.setVisibility(View.GONE);
                 mainBinding.staticLoadingScreen.setVisibility(View.VISIBLE);
                 getMovieList(getURL.toString());
+                break;
+            case R.id.menu_sort_favorites:
+                mMainViewAdapter.setMovieList(null);
+                mSortType = Constants.sortByFavorites;
+                mainBinding.staticErrorDisplay.setVisibility(View.GONE);
+                mainBinding.staticLoadingScreen.setVisibility(View.VISIBLE);
                 break;
             case R.id.menu_sort_popularity:
                 getURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, 1, Constants.TMDBAPIQueryKeyGetPopular, null);

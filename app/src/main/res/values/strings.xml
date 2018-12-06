@@ -21,6 +21,7 @@
     <string name="details_movie_is_adult">(ADULT)</string>
     <string name="details_no_reviews">There are no reviews yet.</string>
     <string name="no_connectivity">You have no internet connectivity.</string>
+    <string name="favorites">My Favorites</string>
 
     <!-- An Array of default youtube videos to use -->
     <string-array name="youtube_default_IDs">

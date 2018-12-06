@@ -214,4 +214,8 @@ public class ShowMovieDetails extends AppCompatActivity implements
             detailView.imageBackdrop.setTranslationY(scrollY / 2);
         }
     }
+
+    private void onFavoriteToggle() {
+
+    }
 }

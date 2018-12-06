@@ -1,6 +1,7 @@
 package com.rasjdd.ras.popularmoviesstage2.Models;
 
 import com.google.gson.annotations.SerializedName;
+import com.rasjdd.ras.popularmoviesstage2.DatabaseFunctions.FavoriteMovieDetails;
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.MovieListDetailResponse;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ public class FavoriteList {
     @SerializedName("total_pages")
     private int total_pages;
     @SerializedName("results")
-    private ArrayList<MovieListDetailResponse> results;
+    private ArrayList<FavoriteMovieDetails> results;
 
     public int getPage() {
         return page;
@@ -39,11 +40,11 @@ public class FavoriteList {
         this.total_pages = total_pages;
     }
 
-    public ArrayList<MovieListDetailResponse> getResults() {
+    public ArrayList<FavoriteMovieDetails> getResults() {
         return results;
     }
 
-    public void setResults(ArrayList<MovieListDetailResponse> results) {
+    public void setResults(ArrayList<FavoriteMovieDetails> results) {
         this.results = results;
     }
 }
