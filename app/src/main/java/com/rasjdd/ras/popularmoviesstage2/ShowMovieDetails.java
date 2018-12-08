@@ -104,11 +104,11 @@ public class ShowMovieDetails extends AppCompatActivity implements
 
             URL movieDetailUrl = NetUtils.buildMediaDetailUrl(Constants.TMDBMovieType, Integer.toString(mSelectedMovie.getId()));
             getMovieDetails(movieDetailUrl.toString());
-            final boolean[] favd = {((DetailViewModel) viewModel).isFavorited(mSelectedMovie.getId())};
+            boolean favd = ((DetailViewModel) viewModel).isFavorited(mSelectedMovie.getId());
 
             if (mSelectedMovie.isAdult()) isAdult += " | " + getString(R.string.details_movie_is_adult);
 
-            if (favd[0]) {
+            if (favd) {
                 detailView.btnFavoriteButton.setImageResource(R.drawable.ic_fav_on);
             }
 
@@ -155,12 +155,12 @@ public class ShowMovieDetails extends AppCompatActivity implements
             favoriteFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (favd[0]){
-                        favd[0] = ((DetailViewModel) viewModel).delFavorite(movieDetails);
+                    if (favd){
+                        ((DetailViewModel) viewModel).delFavorite(movieDetails);
                         detailView.btnFavoriteButton.setImageResource(R.drawable.ic_fav_off);
                     }
-                    if (!favd[0]){
-                        favd[0] = ((DetailViewModel) viewModel).addFavorite(movieDetails);
+                    if (!favd){
+                        ((DetailViewModel) viewModel).addFavorite(movieDetails);
                         detailView.btnFavoriteButton.setImageResource(R.drawable.ic_fav_on);
                     }
                 }
