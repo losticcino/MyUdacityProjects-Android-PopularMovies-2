@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -74,7 +75,8 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
         gsonBuilder.serializeNulls();
         gMovieList = gsonBuilder.create();
 
-        GridLayoutManager posterLayout = new GridLayoutManager(this,3);
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        GridLayoutManager posterLayout = new GridLayoutManager(this,(metrics.widthPixels / 350));
 
         mainBinding.recyclerPosterGrid.setLayoutManager(posterLayout);
 

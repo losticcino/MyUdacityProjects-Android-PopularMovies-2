@@ -1,10 +1,12 @@
 <resources>
     <!--  -->
     <!-- Main App Strings -->
-    <string name="app_name">movInformer</string>
+    <string name="app_name">Mr. Movie</string>
     <string name="loading_message">Loading...</string>
     <string name="error_message">An Error Has Occurred.</string>
     <string name="cant_fetch_data">Can not Fetch Data</string>
+    <string name="no_connectivity">You have no internet connectivity.</string>
+    <string name="favorites">My Favorites</string>
 
     <!-- Menu Strings -->
     <string name="sortBy_popularity">Most Popular</string>
@@ -20,8 +22,8 @@
     <string name="details_heading_rating">Rating</string>
     <string name="details_movie_is_adult">(ADULT)</string>
     <string name="details_no_reviews">There are no reviews yet.</string>
-    <string name="no_connectivity">You have no internet connectivity.</string>
-    <string name="favorites">My Favorites</string>
+    <string name="favorite_button">Favorite</string>
+    <string name="details_actionbar_name">Movie Details</string>
 
     <!-- An Array of default youtube videos to use -->
     <string-array name="youtube_default_IDs">

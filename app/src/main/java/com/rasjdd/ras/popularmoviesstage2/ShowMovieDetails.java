@@ -10,12 +10,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Toast;
@@ -52,6 +55,8 @@ public class ShowMovieDetails extends AppCompatActivity implements
     private TrailerSpinnerAdapter trailerSpinnerAdapter;
     private ReviewSpinnerAdapter reviewSpinnerAdapter;
     private MovieDetails movieDetails;
+    private boolean favd;
+    private ViewModel viewModel;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -87,8 +92,9 @@ public class ShowMovieDetails extends AppCompatActivity implements
         SpannableStringBuilder sbSynopsis = new SpannableStringBuilder(getString(R.string.details_heading_synopsis) + ": ");
         sbSynopsis.setSpan(boldTypeface, 0, getString(R.string.details_heading_synopsis).length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
-        FloatingActionButton favoriteFab = (FloatingActionButton) detailView.btnFavoriteButton;
-        ViewModel viewModel = new DetailViewModel(this.getApplication());
+//        FloatingActionButton favoriteFab = (FloatingActionButton) detailView.btnFavoriteButton;
+
+        viewModel = new DetailViewModel(this.getApplication());
 
         // TODO Implement Favorites
 
@@ -104,13 +110,9 @@ public class ShowMovieDetails extends AppCompatActivity implements
 
             URL movieDetailUrl = NetUtils.buildMediaDetailUrl(Constants.TMDBMovieType, Integer.toString(mSelectedMovie.getId()));
             getMovieDetails(movieDetailUrl.toString());
-            boolean favd = ((DetailViewModel) viewModel).isFavorited(mSelectedMovie.getId());
+            favd = ((DetailViewModel) viewModel).isFavorited(mSelectedMovie.getId());
 
             if (mSelectedMovie.isAdult()) isAdult += " | " + getString(R.string.details_movie_is_adult);
-
-            if (favd) {
-                detailView.btnFavoriteButton.setImageResource(R.drawable.ic_fav_on);
-            }
 
             detailView.contentTitle.setText(mSelectedMovie.getTitle());
 
@@ -118,13 +120,7 @@ public class ShowMovieDetails extends AppCompatActivity implements
             detailView.contentRating.setText(String.valueOf(mSelectedMovie.getVote_average()));
             int ratingColor = (Integer) new ArgbEvaluator().evaluate((mSelectedMovie.getVote_average() / 10 + 0.1f),getResources().getColor(R.color.colorBad), getResources().getColor(R.color.colorGood));
             detailView.contentRating.setTextColor(ratingColor);
-//            detailView.hBreak1.setVisibility(View.GONE);
 
-
-            //Set Popularity
-//            detailView.contentPopularity.setText("pop: (" + String.valueOf(mSelectedMovie.getPopularity()) + ")");
-
-            //Set Extra info ~~ date | lang | ?adult
             detailView.contentMoreInfo.setText(new StringBuilder(getString(R.string.details_heading_release)
                     + ": " + mSelectedMovie.getRelease_date()
                     + " | " + mSelectedMovie.getOriginal_language() + isAdult));
@@ -151,20 +147,6 @@ public class ShowMovieDetails extends AppCompatActivity implements
                     .load(url.toString())
                     .placeholder(R.drawable.ic_image_placeholder)
                     .into(detailView.imagePoster);
-
-            favoriteFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (favd){
-                        ((DetailViewModel) viewModel).delFavorite(movieDetails);
-                        detailView.btnFavoriteButton.setImageResource(R.drawable.ic_fav_off);
-                    }
-                    if (!favd){
-                        ((DetailViewModel) viewModel).addFavorite(movieDetails);
-                        detailView.btnFavoriteButton.setImageResource(R.drawable.ic_fav_on);
-                    }
-                }
-            });
         }
     }
 
@@ -238,29 +220,48 @@ public class ShowMovieDetails extends AppCompatActivity implements
         @Override
         public void onScrollChanged() {
             int scrollY = Math.min(Math.max(detailView.DetailParentScrollView.getScrollY(), 0), getResources().getDimensionPixelSize(R.dimen.DetailBackdropHeight));
+            int scrollPos = detailView.DetailParentScrollView.getScrollY();
             detailView.imageBackdrop.setTranslationY(scrollY / 3);
             detailView.whitebackground.setTop(detailView.contentTitle.getTop());
+            if (scrollPos > detailView.contentTitle.getBottom()) {
+                setTitle(movieDetails.getTitle());
+            }
+            if (scrollPos < detailView.contentTitle.getBottom()) {
+                setTitle(getString(R.string.details_actionbar_name));
+            }
+            if (scrollPos > detailView.contentTitle.getTop()){
+                detailView.imagePoster.setBottom(detailView.contentRating.getBottom() - (scrollPos - detailView.contentTitle.getTop()));
+            }
         }
     }
 
-//    private void onFavoriteToggle() {
-//        AppExecutors.getExecInstance().diskIO().execute(() -> {
-//            boolean isFavorite = ;
-//
-//            if (isFavorite) {
-//                viewModel.removeMovieFave(selectedMovie);
-//                runOnUiThread(() -> {
-//                    faveButton.setImageDrawable(unFavedButtonDrawable);
-//                    Toast.makeText(this, faveRemovedText, Toast.LENGTH_SHORT).show();
-//                });
-//            } else {
-//                viewModel.addMovieFave(selectedMovie);
-//                runOnUiThread(() -> {
-//                    faveButton.setImageDrawable(favedButtonDrawable);
-//                    Toast.makeText(this, faveAddedText, Toast.LENGTH_SHORT).show();
-//                });
-//            }
-//
-//        });
-//    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater detailMenuInflater = getMenuInflater();
+        detailMenuInflater.inflate(R.menu.detail_menu, menu);
+        MenuItem item = menu.findItem(R.id.btnFavoriteMovie);
+        if (favd) item.setIcon(R.drawable.ic_fav_on);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.btnFavoriteMovie:
+                if (favd){
+                    ((DetailViewModel) viewModel).delFavorite(movieDetails);
+                    item.setIcon(R.drawable.ic_fav_off);
+                }
+                if (!favd){
+                    ((DetailViewModel) viewModel).addFavorite(movieDetails);
+                    item.setIcon(R.drawable.ic_fav_on);
+                }
+                favd = ((DetailViewModel) viewModel).isFavorited(movieDetails.getId());
+                break;
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                break;
+        }
+        return true;
+    }
 }

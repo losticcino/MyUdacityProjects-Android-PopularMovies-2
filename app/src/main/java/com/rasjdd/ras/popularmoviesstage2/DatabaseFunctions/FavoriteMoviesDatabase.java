@@ -28,11 +28,4 @@ public abstract class FavoriteMoviesDatabase extends RoomDatabase {
 
     public abstract MovieDAO movieDAO();
 
-//    Thread thread = new Thread(new Runnable() {
-//        @Override
-//        public void run() {
-//            //Do Database Logic
-//        }
-//    });
-//    thread.start();
 }
