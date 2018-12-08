@@ -19,11 +19,20 @@ public abstract class FavoriteMoviesDatabase extends RoomDatabase {
             synchronized (LOCK) {
                 favoriteMoviesDatabase = Room.databaseBuilder(context.getApplicationContext(),
                 FavoriteMoviesDatabase.class, FavoriteMoviesDatabase.FavMovDatabaseName)
-                .build();
+                        .allowMainThreadQueries()
+                        .build();
             }
         }
         return favoriteMoviesDatabase;
     }
 
     public abstract MovieDAO movieDAO();
+
+//    Thread thread = new Thread(new Runnable() {
+//        @Override
+//        public void run() {
+//            //Do Database Logic
+//        }
+//    });
+//    thread.start();
 }

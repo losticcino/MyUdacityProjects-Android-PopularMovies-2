@@ -38,6 +38,14 @@
                 app:layout_constraintBottom_toBottomOf="@+id/imageBackdrop" />
 
             <TextView
+                android:id="@+id/whitebackground"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorDVTextBackground"
+                app:layout_constraintTop_toBottomOf="@id/imageBackdrop"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
                 android:id="@+id/contentTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

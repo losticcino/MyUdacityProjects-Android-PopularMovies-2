@@ -2,15 +2,10 @@ package com.rasjdd.ras.popularmoviesstage2;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.GridLayoutManager;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.StyleSpan;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,6 +23,7 @@ import com.google.gson.GsonBuilder;
 import com.rasjdd.ras.popularmoviesstage2.Adapters.MainViewAdapter;
 import com.rasjdd.ras.popularmoviesstage2.DatabaseFunctions.FavoriteMoviesDatabase;
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.MovieListDetailResponse;
+import com.rasjdd.ras.popularmoviesstage2.Models.FavoriteList;
 import com.rasjdd.ras.popularmoviesstage2.Models.MovieList;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.Constants;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.NetUtils;
@@ -52,7 +48,8 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
 
     ActivityMainBinding mainBinding;
 
-    private FavoriteMoviesDatabase mFavMovies;
+    private FavoriteMoviesDatabase mFavMovieDb;
+    private FavoriteList mFavList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
         mainBinding.recyclerPosterGrid.setAdapter(mMainViewAdapter);
 
         URL mURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, mPageNumber, mSortType, mSortOrder);
-        // mFavMovies.movieDAO().loadAllFavMovies();
+        mFavMovieDb = FavoriteMoviesDatabase.getInstance(getApplicationContext());
         getMovieList(mURL.toString());
     }
 
@@ -101,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
                     getString(R.string.no_connectivity),
                     Toast.LENGTH_LONG).show();
         }
+//        FavoriteUtilities favoriteUtilities = new FavoriteUtilities();
+//        mFavList = favoriteUtilities.getAllFavorites();
     }
 
     @Override

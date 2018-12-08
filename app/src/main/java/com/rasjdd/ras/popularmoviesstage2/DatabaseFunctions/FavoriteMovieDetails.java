@@ -4,21 +4,21 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-@Entity(tableName = "FavMovie")
+import java.util.Date;
+
+@Entity(tableName = "favMovie")
 public class FavoriteMovieDetails {
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     private int id;
 
     @ColumnInfo(name = "adult")
     private boolean adult;
 
     @ColumnInfo(name = "release_date")
-    private String releaseDate;
+    private Date releaseDate;
 
-    private int tmdbId;
     private String backdropPath;
-    private Object belongsToCollection;
     private int budget;
     private String homepage;
     private String imdbId;
@@ -52,20 +52,12 @@ public class FavoriteMovieDetails {
         this.adult = adult;
     }
 
-    public String getReleaseDate() {
+    public Date getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
+    public void setReleaseDate(Date releaseDate) {
         this.releaseDate = releaseDate;
-    }
-
-    public int getTmdbId() {
-        return tmdbId;
-    }
-
-    public void setTmdbId(int tmdbId) {
-        this.tmdbId = tmdbId;
     }
 
     public String getBackdropPath() {
@@ -74,14 +66,6 @@ public class FavoriteMovieDetails {
 
     public void setBackdropPath(String backdropPath) {
         this.backdropPath = backdropPath;
-    }
-
-    public Object getBelongsToCollection() {
-        return belongsToCollection;
-    }
-
-    public void setBelongsToCollection(Object belongsToCollection) {
-        this.belongsToCollection = belongsToCollection;
     }
 
     public int getBudget() {

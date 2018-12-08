@@ -1,12 +1,16 @@
 package com.rasjdd.ras.popularmoviesstage2;
 
 import android.animation.ArgbEvaluator;
+import android.arch.lifecycle.ViewModel;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.text.Spannable;
@@ -30,6 +34,7 @@ import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.MovieListDetailRes
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.Review;
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.Video;
 import com.rasjdd.ras.popularmoviesstage2.Models.MovieDetails;
+import com.rasjdd.ras.popularmoviesstage2.Models.Views.DetailViewModel;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.Constants;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.NetUtils;
 import com.rasjdd.ras.popularmoviesstage2.databinding.DetailLayoutBinding;
@@ -42,28 +47,31 @@ public class ShowMovieDetails extends AppCompatActivity implements
         TrailerSpinnerAdapter.TrailerOnClickHandler, ReviewSpinnerAdapter.ReviewOnClickHandler {
 
     private DetailLayoutBinding detailView;
-
     private RequestQueue mRequestQueue;
-
     private Gson gMovieDetails;
-
     private TrailerSpinnerAdapter trailerSpinnerAdapter;
     private ReviewSpinnerAdapter reviewSpinnerAdapter;
+    private MovieDetails movieDetails;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.detail_layout);
 
+        // view setup
+        setContentView(R.layout.detail_layout);
         detailView = DataBindingUtil.setContentView(this, R.layout.detail_layout);
+
+        // data access setup
         mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        Intent parentIntent = getIntent();
+
         detailView.DetailParentScrollView.getViewTreeObserver().addOnScrollChangedListener(new ScrollPositionObserver());
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.serializeNulls();
         gMovieDetails = gsonBuilder.create();
 
-        Intent parentIntent = getIntent();
 
         trailerSpinnerAdapter = new TrailerSpinnerAdapter(this);
         GridLayoutManager trailerSpinner = new GridLayoutManager(this, 1);
@@ -76,9 +84,11 @@ public class ShowMovieDetails extends AppCompatActivity implements
         detailView.recyclerReviewSpinner.setAdapter(reviewSpinnerAdapter);
 
         StyleSpan boldTypeface = new StyleSpan(Typeface.BOLD);
-
         SpannableStringBuilder sbSynopsis = new SpannableStringBuilder(getString(R.string.details_heading_synopsis) + ": ");
         sbSynopsis.setSpan(boldTypeface, 0, getString(R.string.details_heading_synopsis).length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
+        FloatingActionButton favoriteFab = (FloatingActionButton) detailView.btnFavoriteButton;
+        ViewModel viewModel = new DetailViewModel(this.getApplication());
 
         // TODO Implement Favorites
 
@@ -94,8 +104,13 @@ public class ShowMovieDetails extends AppCompatActivity implements
 
             URL movieDetailUrl = NetUtils.buildMediaDetailUrl(Constants.TMDBMovieType, Integer.toString(mSelectedMovie.getId()));
             getMovieDetails(movieDetailUrl.toString());
+            final boolean[] favd = {((DetailViewModel) viewModel).isFavorited(mSelectedMovie.getId())};
 
             if (mSelectedMovie.isAdult()) isAdult += " | " + getString(R.string.details_movie_is_adult);
+
+            if (favd[0]) {
+                detailView.btnFavoriteButton.setImageResource(R.drawable.ic_fav_on);
+            }
 
             detailView.contentTitle.setText(mSelectedMovie.getTitle());
 
@@ -137,7 +152,19 @@ public class ShowMovieDetails extends AppCompatActivity implements
                     .placeholder(R.drawable.ic_image_placeholder)
                     .into(detailView.imagePoster);
 
-
+            favoriteFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (favd[0]){
+                        favd[0] = ((DetailViewModel) viewModel).delFavorite(movieDetails);
+                        detailView.btnFavoriteButton.setImageResource(R.drawable.ic_fav_off);
+                    }
+                    if (!favd[0]){
+                        favd[0] = ((DetailViewModel) viewModel).addFavorite(movieDetails);
+                        detailView.btnFavoriteButton.setImageResource(R.drawable.ic_fav_on);
+                    }
+                }
+            });
         }
     }
 
@@ -166,7 +193,7 @@ public class ShowMovieDetails extends AppCompatActivity implements
         @NonNull
         @Override
         public void onResponse(String response) {
-            MovieDetails movieDetails = gMovieDetails.fromJson(response,MovieDetails.class);
+            movieDetails = gMovieDetails.fromJson(response,MovieDetails.class);
 
             // TODO Clean this up with some helper functions
 
@@ -211,11 +238,29 @@ public class ShowMovieDetails extends AppCompatActivity implements
         @Override
         public void onScrollChanged() {
             int scrollY = Math.min(Math.max(detailView.DetailParentScrollView.getScrollY(), 0), getResources().getDimensionPixelSize(R.dimen.DetailBackdropHeight));
-            detailView.imageBackdrop.setTranslationY(scrollY / 2);
+            detailView.imageBackdrop.setTranslationY(scrollY / 3);
+            detailView.whitebackground.setTop(detailView.contentTitle.getTop());
         }
     }
 
-    private void onFavoriteToggle() {
-
-    }
+//    private void onFavoriteToggle() {
+//        AppExecutors.getExecInstance().diskIO().execute(() -> {
+//            boolean isFavorite = ;
+//
+//            if (isFavorite) {
+//                viewModel.removeMovieFave(selectedMovie);
+//                runOnUiThread(() -> {
+//                    faveButton.setImageDrawable(unFavedButtonDrawable);
+//                    Toast.makeText(this, faveRemovedText, Toast.LENGTH_SHORT).show();
+//                });
+//            } else {
+//                viewModel.addMovieFave(selectedMovie);
+//                runOnUiThread(() -> {
+//                    faveButton.setImageDrawable(favedButtonDrawable);
+//                    Toast.makeText(this, faveAddedText, Toast.LENGTH_SHORT).show();
+//                });
+//            }
+//
+//        });
+//    }
 }
