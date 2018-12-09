@@ -74,6 +74,7 @@ public class ShowMovieDetails extends AppCompatActivity implements
                     Toast.LENGTH_LONG).show();
             NavUtils.navigateUpFromSameTask(this);
         }
+        else mMovieId = parentIntent.getIntExtra(Constants.movieIdIntent, Constants.TMDBDefaultID);
 
         detailView.DetailParentScrollView.getViewTreeObserver().addOnScrollChangedListener(new ScrollPositionObserver());
 
@@ -94,17 +95,9 @@ public class ShowMovieDetails extends AppCompatActivity implements
 
         viewModel = new DetailViewModel(this.getApplication());
 
-
-        URL url;
-//        MovieListDetailResponse mSelectedMovie = parentIntent.getParcelableExtra(MovieListDetailResponse.MyParcelName);
-        mMovieId = parentIntent.getIntExtra(Constants.movieIdIntent, Constants.TMDBDefaultID);
-
         URL movieDetailUrl = NetUtils.buildMediaDetailUrl(Constants.TMDBMovieType, Integer.toString(mMovieId));
         getMovieDetails(movieDetailUrl.toString());
         favd = ((DetailViewModel) viewModel).isFavorited(mMovieId);
-        Toast.makeText(ShowMovieDetails.this,
-                getString(R.string.cant_fetch_data),
-                Toast.LENGTH_LONG).show();
     }
 
     private void getMovieDetails(String s) {

@@ -26,7 +26,7 @@ public class MainViewModel extends AndroidViewModel {
 
     public MovieList getFavoriteList(){
 
-        ArrayList<MovieListDetailResponse> favMovArLst = null;
+        ArrayList<MovieListDetailResponse> favMovArLst = new ArrayList<>();
         MovieList mFavs = new MovieList();
 
         if (null != favMovsList) {
@@ -37,7 +37,7 @@ public class MainViewModel extends AndroidViewModel {
                 String s = "";
                 s = dateFormat.format(favMov.getReleaseDate());
 
-                MovieListDetailResponse movie = null;
+                MovieListDetailResponse movie = new MovieListDetailResponse();
 
                 int i = favMov.getId();
 
@@ -46,13 +46,8 @@ public class MainViewModel extends AndroidViewModel {
                 movie.setRelease_date(s);
                 movie.setBackdrop_path(favMov.getBackdropPath());
                 movie.setOriginal_language(favMov.getOriginalLanguage());
-                movie.setOriginal_title(favMov.getOriginalTitle());
-                movie.setOverview(favMov.getOverview());
-                movie.setPopularity(favMov.getPopularity());
                 movie.setPoster_path(favMov.getPosterPath());
                 movie.setTitle(favMov.getTitle());
-                movie.setVote_average(favMov.getVoteAverage());
-                movie.setVote_count(favMov.getVoteCount());
 
                 favMovArLst.add(movie);
             }

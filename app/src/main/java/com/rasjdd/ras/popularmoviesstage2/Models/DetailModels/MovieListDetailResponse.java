@@ -1,13 +1,8 @@
 package com.rasjdd.ras.popularmoviesstage2.Models.DetailModels;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.SerializedName;
 
-public class MovieListDetailResponse implements Parcelable {
-
-    public static final String MyParcelName = "MovieListDetailResponse";
+public class MovieListDetailResponse {
 
     @SerializedName("id")
     private int id;
@@ -36,34 +31,6 @@ public class MovieListDetailResponse implements Parcelable {
     @SerializedName("backdrop_path")
     private String backdrop_path;
 
-
-    public MovieListDetailResponse(Parcel in) {
-        id = in.readInt();
-        title = in.readString();
-        release_date = in.readString();
-        overview = in.readString();
-        popularity = in.readFloat();
-        vote_average = in.readFloat();
-        vote_count = in.readInt();
-        original_title = in.readString();
-        original_language = in.readString();
-        video = in.readByte() != 0;
-        adult = in.readByte() != 0;
-        poster_path = in.readString();
-        backdrop_path = in.readString();
-    }
-
-    public static final Creator<MovieListDetailResponse> CREATOR = new Creator<MovieListDetailResponse>() {
-        @Override
-        public MovieListDetailResponse createFromParcel(Parcel in) {
-            return new MovieListDetailResponse(in);
-        }
-
-        @Override
-        public MovieListDetailResponse[] newArray(int size) {
-            return new MovieListDetailResponse[size];
-        }
-    };
 
     public int getId() {
         return id;
@@ -167,28 +134,6 @@ public class MovieListDetailResponse implements Parcelable {
 
     public void setBackdrop_path(String backdrop_path) {
         this.backdrop_path = backdrop_path;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(title);
-        dest.writeString(release_date);
-        dest.writeString(overview);
-        dest.writeFloat(popularity);
-        dest.writeFloat(vote_average);
-        dest.writeInt(vote_count);
-        dest.writeString(original_title);
-        dest.writeString(original_language);
-        dest.writeByte((byte) (video ? 1 : 0));
-        dest.writeByte((byte) (adult ? 1 : 0));
-        dest.writeString(poster_path);
-        dest.writeString(backdrop_path);
     }
 
 }

@@ -25,6 +25,7 @@ import com.google.gson.GsonBuilder;
 import com.rasjdd.ras.popularmoviesstage2.Adapters.MainViewAdapter;
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.MovieListDetailResponse;
 import com.rasjdd.ras.popularmoviesstage2.Models.MovieList;
+import com.rasjdd.ras.popularmoviesstage2.Models.Views.MainViewModel;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.Constants;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.NetUtils;
 import com.rasjdd.ras.popularmoviesstage2.databinding.ActivityMainBinding;
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
         }
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
-
+        mViewModel = new MainViewModel(getApplication());
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.serializeNulls();
@@ -86,17 +87,17 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
 
         URL mURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, mPageNumber, mSortType, mSortOrder);
 
-//        if (NetUtils.testConnectivityBasic(this) && mSortType != Constants.sortByFavorites) {
+        if (NetUtils.testConnectivityBasic(this) && !mSortType.equals(Constants.sortByFavorites)) {
             requestQueue = Volley.newRequestQueue(getApplicationContext());
             getMovieList(mURL.toString());
-//        }
-//        else if (!NetUtils.testConnectivityBasic(this) || mSortType == Constants.sortByFavorites){
-//            mViewModel = new MainViewModel(this.getApplication());
-//            mFavList = ((MainViewModel) mViewModel).getFavoriteList();
-//            mMainViewAdapter.setMovieList(mFavList.getResults());
-//        }
-//        mFavList = ((MainViewModel) mViewModel).getFavoriteList();
-//        getMovieList(mURL.toString());
+        }
+        else if (!NetUtils.testConnectivityBasic(this) || mSortType == Constants.sortByFavorites){
+            mViewModel = new MainViewModel(this.getApplication());
+            mFavList = ((MainViewModel) mViewModel).getFavoriteList();
+            mMainViewAdapter.setMovieList(mFavList.getResults());
+        }
+        mFavList = ((MainViewModel) mViewModel).getFavoriteList();
+        getMovieList(mURL.toString());
     }
 
     private void getMovieList(String s) {
@@ -174,7 +175,6 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
     @Override
     public void onMovieDetailsClick(MovieListDetailResponse result) {
         Intent detailIntent = new Intent(this, ShowMovieDetails.class);
-//        detailIntent.putExtra(MovieListDetailResponse.MyParcelName, result);
         detailIntent.putExtra(Constants.movieIdIntent, result.getId());
         startActivity(detailIntent);
     }
@@ -205,5 +205,9 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
         mainBinding.staticErrorDisplay.setVisibility(View.GONE);
         mainBinding.recyclerPosterGrid.setVisibility(View.VISIBLE);
     }
+
+//    private void refreshFavoriteList() {
+//        mViewModel g
+//    }
 
 }
