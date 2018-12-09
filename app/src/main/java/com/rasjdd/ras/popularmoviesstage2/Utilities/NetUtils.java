@@ -2,6 +2,7 @@ package com.rasjdd.ras.popularmoviesstage2.Utilities;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 
 import java.net.MalformedURLException;
@@ -179,18 +180,14 @@ public class NetUtils {
                 .appendPath(Constants.YouTubeThumbnailResource)
                 .appendQueryParameter(Constants.YouTubeWatchQueryKey, videoIdentifier);
 
-        Uri uri = formedURI.build();
-
-        return uri;
+        return formedURI.build();
     }
 
     public static boolean testConnectivityBasic(Context context){
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if ((connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE )) != null
-                && connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).isConnected()) return true;
-        else if ((connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI )) != null
-                && connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()) return true;
+        NetworkInfo activeNetwork = connMgr.getActiveNetworkInfo();
 
-        return false;
+        return activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
     }
 }

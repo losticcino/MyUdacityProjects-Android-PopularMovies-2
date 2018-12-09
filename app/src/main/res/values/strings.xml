@@ -2,16 +2,16 @@
     <!--  -->
     <!-- Main App Strings -->
     <string name="app_name">Mr. Movie</string>
-    <string name="loading_message">Loading...</string>
+    <string name="loading_message">Loading…</string>
     <string name="error_message">An Error Has Occurred.</string>
     <string name="cant_fetch_data">Can not Fetch Data</string>
     <string name="no_connectivity">You have no internet connectivity.</string>
-    <string name="favorites">My Favorites</string>
 
     <!-- Menu Strings -->
+    <string name="sortBy_favorites">My Favorites</string>
+    <string name="sortBy_name">Now Playing</string>
     <string name="sortBy_popularity">Most Popular</string>
     <string name="sortBy_rating">Top Rated</string>
-    <string name="sortBy_name">Now Playing</string>
     <string name="sort_by">Sort By</string>
     <string name="refresh">Refresh</string>
 

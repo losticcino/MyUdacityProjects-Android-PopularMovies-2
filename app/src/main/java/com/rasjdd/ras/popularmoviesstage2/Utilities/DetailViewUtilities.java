@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.rasjdd.ras.popularmoviesstage2.R;
 
 public class DetailViewUtilities {
-    Context context;
+    private Context context;
 
     public void setContext(Context context) {
         this.context = context;
@@ -25,7 +25,7 @@ public class DetailViewUtilities {
         sbSynopsis.setSpan(boldTypeface, 0,
                 context.getString(R.string.details_heading_synopsis).length(),
                 Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        sbSynopsis.append("\n\t\t" + s);
+        sbSynopsis.append("\n\t\t").append(s);
         textView.setText(sbSynopsis);
     }
 
@@ -37,11 +37,10 @@ public class DetailViewUtilities {
     }
 
     public void SetMoreInfo(TextView textView, String releaseDate, String originalLanguage, Boolean isAdult){
-        String joint = " | ";
         String s = context.getString(R.string.details_heading_release) + ": ";
-        s += releaseDate + joint;
+        s += releaseDate + Constants.textJoint;
         s += originalLanguage;
-        if (isAdult) s += joint + context.getString(R.string.details_movie_is_adult);
+        if (isAdult) s += Constants.textJoint + context.getString(R.string.details_movie_is_adult);
         textView.setText(s);
     }
 }

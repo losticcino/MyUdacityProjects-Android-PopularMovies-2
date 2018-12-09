@@ -15,22 +15,21 @@ import java.util.Date;
 import java.util.List;
 
 public class FavoriteUtilities {
-    private MovieDAO movieDAO;
-    private AppExecutors appExecutors;
+    private final ThreadLocal<MovieDAO> movieDAO = new ThreadLocal<MovieDAO>();
+    private final AppExecutors appExecutors;
 
     public FavoriteUtilities(Application application) {
-        movieDAO = FavoriteMoviesDatabase.getInstance(application).movieDAO();
+        movieDAO.set(FavoriteMoviesDatabase.getInstance(application).movieDAO());
         appExecutors = AppExecutors.getExecInstance();
     }
 
     public boolean movieIsFavorited(int id) {
-        FavoriteMovieDetails favoriteMovie = movieDAO.loadFavMovieById(id);
+        FavoriteMovieDetails favoriteMovie = movieDAO.get().loadFavMovieById(id);
         return favoriteMovie != null;
     }
 
     public List<FavoriteMovieDetails> getMovieList() {
-        List<FavoriteMovieDetails> favList = movieDAO.loadAllFavMovies();
-        return favList;
+        return movieDAO.get().loadAllFavMovies();
     }
 
     public FavoriteMovieDetails convertToFavoriteMovie(MovieDetails movieDetails) {
@@ -109,10 +108,10 @@ public class FavoriteUtilities {
     }
 
     public void addFavorite(FavoriteMovieDetails favoriteMovieDetails) {
-        appExecutors.getDiskIO().execute(() -> movieDAO.insertFavMovie(favoriteMovieDetails));
+        appExecutors.getDiskIO().execute(() -> movieDAO.get().insertFavMovie(favoriteMovieDetails));
     }
 
     public void deleteFavorite(FavoriteMovieDetails favoriteMovieDetails) {
-        appExecutors.getDiskIO().execute(() -> movieDAO.deleteFavMovie(favoriteMovieDetails));
+        appExecutors.getDiskIO().execute(() -> movieDAO.get().deleteFavMovie(favoriteMovieDetails));
     }
 }

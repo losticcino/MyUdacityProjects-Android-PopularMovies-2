@@ -7,6 +7,7 @@ import com.rasjdd.ras.popularmoviesstage2.R;
 import java.util.Random;
 
 public class Constants {
+
     public static final String TMDBAPIServer = "api.themoviedb.org";
     public static final String TMDBImageServer = "image.tmdb.org";
     // sample TMDB image url https://image.tmdb.org/t/p/w185/3IGbjc5ZC5yxim5W0sFING2kdcz.jpg
@@ -59,11 +60,12 @@ public class Constants {
 
     public static String RandomYoutubeIdentifier() {
         String[] ytIDArray = Resources.getSystem().getStringArray(R.array.youtube_default_IDs);
-        String videoIdentifier = ytIDArray[new Random().nextInt(ytIDArray.length)];
-        return videoIdentifier;
+        return ytIDArray[new Random().nextInt(ytIDArray.length)];
     }
 
     //Internal Constants
     public static final String sortByFavorites = "favorites";
     public static final String movieIdIntent = "movieId";
+    public static final String textJoint = " | ";
+
 }
