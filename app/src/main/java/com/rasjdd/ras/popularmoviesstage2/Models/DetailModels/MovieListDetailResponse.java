@@ -37,7 +37,7 @@ public class MovieListDetailResponse implements Parcelable {
     private String backdrop_path;
 
 
-    protected MovieListDetailResponse(Parcel in) {
+    public MovieListDetailResponse(Parcel in) {
         id = in.readInt();
         title = in.readString();
         release_date = in.readString();

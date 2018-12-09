@@ -4,7 +4,6 @@ import android.content.res.Resources;
 
 import com.rasjdd.ras.popularmoviesstage2.R;
 
-import java.security.PublicKey;
 import java.util.Random;
 
 public class Constants {
@@ -48,6 +47,8 @@ public class Constants {
     public static final String TMDBDetailImages = "images";
     public static final String TMDBDetailReviews = "reviews";
 
+    public static final int TMDBDefaultID = 1542; // Office Space!
+
     //Youtube API constants
     public static final String YouTubeWatchServer = "m.youtube.com";
     public static final String YouTubeThumbnailServer = "img.youtube.com";
@@ -64,4 +65,5 @@ public class Constants {
 
     //Internal Constants
     public static final String sortByFavorites = "favorites";
+    public static final String movieIdIntent = "movieId";
 }

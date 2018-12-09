@@ -1,5 +1,6 @@
 package com.rasjdd.ras.popularmoviesstage2;
 
+import android.arch.lifecycle.ViewModel;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -22,9 +23,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.rasjdd.ras.popularmoviesstage2.Adapters.MainViewAdapter;
-import com.rasjdd.ras.popularmoviesstage2.DatabaseFunctions.FavoriteMoviesDatabase;
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.MovieListDetailResponse;
-import com.rasjdd.ras.popularmoviesstage2.Models.FavoriteList;
 import com.rasjdd.ras.popularmoviesstage2.Models.MovieList;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.Constants;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.NetUtils;
@@ -49,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
 
     ActivityMainBinding mainBinding;
 
-    private FavoriteMoviesDatabase mFavMovieDb;
-    private FavoriteList mFavList;
+    private MovieList mFavList;
+    private ViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
 
+
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.serializeNulls();
         gMovieList = gsonBuilder.create();
@@ -85,8 +85,18 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
         mainBinding.recyclerPosterGrid.setAdapter(mMainViewAdapter);
 
         URL mURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, mPageNumber, mSortType, mSortOrder);
-        mFavMovieDb = FavoriteMoviesDatabase.getInstance(getApplicationContext());
-        getMovieList(mURL.toString());
+
+//        if (NetUtils.testConnectivityBasic(this) && mSortType != Constants.sortByFavorites) {
+            requestQueue = Volley.newRequestQueue(getApplicationContext());
+            getMovieList(mURL.toString());
+//        }
+//        else if (!NetUtils.testConnectivityBasic(this) || mSortType == Constants.sortByFavorites){
+//            mViewModel = new MainViewModel(this.getApplication());
+//            mFavList = ((MainViewModel) mViewModel).getFavoriteList();
+//            mMainViewAdapter.setMovieList(mFavList.getResults());
+//        }
+//        mFavList = ((MainViewModel) mViewModel).getFavoriteList();
+//        getMovieList(mURL.toString());
     }
 
     private void getMovieList(String s) {
@@ -129,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
                 mSortType = Constants.sortByFavorites;
                 mainBinding.staticErrorDisplay.setVisibility(View.GONE);
                 mainBinding.staticLoadingScreen.setVisibility(View.VISIBLE);
+                mMainViewAdapter.setMovieList(mFavList.getResults());
                 break;
             case R.id.menu_sort_popularity:
                 getURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, 1, Constants.TMDBAPIQueryKeyGetPopular, null);
@@ -163,7 +174,8 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
     @Override
     public void onMovieDetailsClick(MovieListDetailResponse result) {
         Intent detailIntent = new Intent(this, ShowMovieDetails.class);
-        detailIntent.putExtra(MovieListDetailResponse.MyParcelName, result);
+//        detailIntent.putExtra(MovieListDetailResponse.MyParcelName, result);
+        detailIntent.putExtra(Constants.movieIdIntent, result.getId());
         startActivity(detailIntent);
     }
 

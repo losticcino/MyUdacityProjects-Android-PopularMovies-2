@@ -24,6 +24,7 @@
     <string name="details_no_reviews">There are no reviews yet.</string>
     <string name="favorite_button">Favorite</string>
     <string name="details_actionbar_name">Movie Details</string>
+    <string name="intent_failed">There was an error getting the Movie information.</string>
 
     <!-- An Array of default youtube videos to use -->
     <string-array name="youtube_default_IDs">

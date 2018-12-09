@@ -2,8 +2,9 @@ package com.rasjdd.ras.popularmoviesstage2.DatabaseFunctions;
 
 import android.app.Application;
 
-import com.rasjdd.ras.popularmoviesstage2.Models.FavoriteList;
+import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.MovieListDetailResponse;
 import com.rasjdd.ras.popularmoviesstage2.Models.MovieDetails;
+import com.rasjdd.ras.popularmoviesstage2.Models.MovieList;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.AppExecutors;
 
 import java.text.DateFormat;
@@ -25,6 +26,11 @@ public class FavoriteUtilities {
     public boolean movieIsFavorited(int id) {
         FavoriteMovieDetails favoriteMovie = movieDAO.loadFavMovieById(id);
         return favoriteMovie != null;
+    }
+
+    public List<FavoriteMovieDetails> getMovieList() {
+        List<FavoriteMovieDetails> favList = movieDAO.loadAllFavMovies();
+        return favList;
     }
 
     public FavoriteMovieDetails convertToFavoriteMovie(MovieDetails movieDetails) {
@@ -63,15 +69,36 @@ public class FavoriteUtilities {
 
     }
 
-    public FavoriteList getAllFavorites(){
-        List<FavoriteMovieDetails> favoriteMovieDetailsList = movieDAO.loadAllFavMovies();
-        ArrayList<FavoriteMovieDetails> favMovArLst = null;
-        FavoriteList mFavs = new FavoriteList();
-        if (null != favoriteMovieDetailsList) {
-            for (FavoriteMovieDetails favoriteMovieDetails : favoriteMovieDetailsList) {
-                favMovArLst.add(favoriteMovieDetails);
+    public MovieList convertFavListToMovieList(List<FavoriteMovieDetails> favoriteList) {
+        ArrayList<MovieListDetailResponse> favMovArLst = null;
+        MovieList mFavs = new MovieList();
+
+        if (null != favoriteList) {
+            for (FavoriteMovieDetails favMov : favoriteList) {
+
+                // Convert the date string to something more program friendly.
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String s = "";
+                s = dateFormat.format(favMov.getReleaseDate());
+
+                MovieListDetailResponse movie = null;
+
+                movie.setId(favMov.getId());
+                movie.setAdult(favMov.isAdult());
+                movie.setRelease_date(s);
+                movie.setBackdrop_path(favMov.getBackdropPath());
+                movie.setOriginal_language(favMov.getOriginalLanguage());
+                movie.setOriginal_title(favMov.getOriginalTitle());
+                movie.setOverview(favMov.getOverview());
+                movie.setPopularity(favMov.getPopularity());
+                movie.setPoster_path(favMov.getPosterPath());
+                movie.setTitle(favMov.getTitle());
+                movie.setVote_average(favMov.getVoteAverage());
+                movie.setVote_count(favMov.getVoteCount());
+
+                favMovArLst.add(movie);
             }
-            int mMovies = favoriteMovieDetailsList.size();
+            int mMovies = favoriteList.size();
             mFavs.setTotal_pages(1);
             mFavs.setTotal_pages(1);
             mFavs.setTotal_results(mMovies);
