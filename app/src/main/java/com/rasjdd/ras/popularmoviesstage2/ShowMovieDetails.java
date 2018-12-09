@@ -1,17 +1,19 @@
 package com.rasjdd.ras.popularmoviesstage2;
 
-import android.animation.ArgbEvaluator;
+import android.arch.lifecycle.ViewModel;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.StyleSpan;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Toast;
@@ -26,11 +28,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.rasjdd.ras.popularmoviesstage2.Adapters.ReviewSpinnerAdapter;
 import com.rasjdd.ras.popularmoviesstage2.Adapters.TrailerSpinnerAdapter;
-import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.MovieListDetailResponse;
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.Review;
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.Video;
 import com.rasjdd.ras.popularmoviesstage2.Models.MovieDetails;
+import com.rasjdd.ras.popularmoviesstage2.Models.Views.DetailViewModel;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.Constants;
+import com.rasjdd.ras.popularmoviesstage2.Utilities.DetailViewUtilities;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.NetUtils;
 import com.rasjdd.ras.popularmoviesstage2.databinding.DetailLayoutBinding;
 import com.squareup.picasso.Picasso;
@@ -42,28 +45,44 @@ public class ShowMovieDetails extends AppCompatActivity implements
         TrailerSpinnerAdapter.TrailerOnClickHandler, ReviewSpinnerAdapter.ReviewOnClickHandler {
 
     private DetailLayoutBinding detailView;
-
     private RequestQueue mRequestQueue;
-
     private Gson gMovieDetails;
-
     private TrailerSpinnerAdapter trailerSpinnerAdapter;
     private ReviewSpinnerAdapter reviewSpinnerAdapter;
+    private MovieDetails movieDetails;
+    private boolean favd;
+    private ViewModel viewModel;
+    private DetailViewUtilities detailViewUtilities = new DetailViewUtilities();
+    private int mMovieId;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // view setup
         setContentView(R.layout.detail_layout);
-
         detailView = DataBindingUtil.setContentView(this, R.layout.detail_layout);
+        detailViewUtilities.setContext(this);
+
+        // data access setup
         mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        Intent parentIntent = getIntent();
+
+        if (parentIntent == null){
+            Toast.makeText(ShowMovieDetails.this,
+                    getString(R.string.intent_failed),
+                    Toast.LENGTH_LONG).show();
+            NavUtils.navigateUpFromSameTask(this);
+        }
+        else mMovieId = parentIntent.getIntExtra(Constants.movieIdIntent, Constants.TMDBDefaultID);
+
+        // data view setup.
         detailView.DetailParentScrollView.getViewTreeObserver().addOnScrollChangedListener(new ScrollPositionObserver());
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.serializeNulls();
         gMovieDetails = gsonBuilder.create();
 
-        Intent parentIntent = getIntent();
 
         trailerSpinnerAdapter = new TrailerSpinnerAdapter(this);
         GridLayoutManager trailerSpinner = new GridLayoutManager(this, 1);
@@ -75,70 +94,11 @@ public class ShowMovieDetails extends AppCompatActivity implements
         detailView.recyclerReviewSpinner.setLayoutManager(reviewSpinner);
         detailView.recyclerReviewSpinner.setAdapter(reviewSpinnerAdapter);
 
-        StyleSpan boldTypeface = new StyleSpan(Typeface.BOLD);
+        viewModel = new DetailViewModel(this.getApplication());
 
-        SpannableStringBuilder sbSynopsis = new SpannableStringBuilder(getString(R.string.details_heading_synopsis) + ": ");
-        sbSynopsis.setSpan(boldTypeface, 0, getString(R.string.details_heading_synopsis).length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-
-        // TODO Implement Favorites
-
-
-        if (parentIntent != null) {
-
-            // TODO Clean this all up and use the Volley response
-            // TODO follow-on: remove parceling and only put the movie ID as an extra.
-
-            URL url;
-            String isAdult = "";
-            MovieListDetailResponse mSelectedMovie = parentIntent.getParcelableExtra(MovieListDetailResponse.MyParcelName);
-
-            URL movieDetailUrl = NetUtils.buildMediaDetailUrl(Constants.TMDBMovieType, Integer.toString(mSelectedMovie.getId()));
-            getMovieDetails(movieDetailUrl.toString());
-
-            if (mSelectedMovie.isAdult()) isAdult += " | " + getString(R.string.details_movie_is_adult);
-
-            detailView.contentTitle.setText(mSelectedMovie.getTitle());
-
-            //Set Voter Rating
-            detailView.contentRating.setText(String.valueOf(mSelectedMovie.getVote_average()));
-            int ratingColor = (Integer) new ArgbEvaluator().evaluate((mSelectedMovie.getVote_average() / 10 + 0.1f),getResources().getColor(R.color.colorBad), getResources().getColor(R.color.colorGood));
-            detailView.contentRating.setTextColor(ratingColor);
-//            detailView.hBreak1.setVisibility(View.GONE);
-
-
-            //Set Popularity
-//            detailView.contentPopularity.setText("pop: (" + String.valueOf(mSelectedMovie.getPopularity()) + ")");
-
-            //Set Extra info ~~ date | lang | ?adult
-            detailView.contentMoreInfo.setText(new StringBuilder(getString(R.string.details_heading_release)
-                    + ": " + mSelectedMovie.getRelease_date()
-                    + " | " + mSelectedMovie.getOriginal_language() + isAdult));
-
-            //populate trailer info
-
-
-            //Set Synopsis info
-            sbSynopsis.append("\n\t\t" + mSelectedMovie.getOverview());
-            detailView.contentSynopsis.setText(sbSynopsis);
-
-            //Build Backdrop URL
-            url = NetUtils.buildImageURL(Constants.TMDBBackdropWidthBig,mSelectedMovie.getBackdrop_path());
-
-            Picasso.get()
-                    .load(url.toString())
-                    .placeholder(R.drawable.ic_image_placeholder)
-                    .into(detailView.imageBackdrop);
-
-            //Build Poster URL
-            url = NetUtils.buildImageURL(Constants.TMDBPosterWidthBig,mSelectedMovie.getPoster_path());
-
-            Picasso.get()
-                    .load(url.toString())
-                    .placeholder(R.drawable.ic_image_placeholder)
-                    .into(detailView.imagePoster);
-
-
-        }
+        URL movieDetailUrl = NetUtils.buildMediaDetailUrl(Constants.TMDBMovieType, Integer.toString(mMovieId));
+        getMovieDetails(movieDetailUrl.toString());
+        favd = ((DetailViewModel) viewModel).isFavorited(mMovieId);
     }
 
     private void getMovieDetails(String s) {
@@ -166,7 +126,27 @@ public class ShowMovieDetails extends AppCompatActivity implements
         @NonNull
         @Override
         public void onResponse(String response) {
-            MovieDetails movieDetails = gMovieDetails.fromJson(response,MovieDetails.class);
+            URL url;
+            movieDetails = gMovieDetails.fromJson(response,MovieDetails.class);
+
+            detailView.contentTitle.setText(movieDetails.getTitle());
+            detailViewUtilities.SetRating(detailView.contentRating, movieDetails.getVoteAverage());
+            detailViewUtilities.SetSynopsisText(detailView.contentSynopsis, movieDetails.getOverview());
+            detailViewUtilities.SetMoreInfo(detailView.contentMoreInfo, movieDetails.getReleaseDate(), movieDetails.getOriginalLanguage(), movieDetails.isAdult());
+
+            //Build Backdrop URL
+            url = NetUtils.buildImageURL(Constants.TMDBBackdropWidthBig,movieDetails.getBackdropPath());
+            Picasso.get()
+                    .load(url.toString())
+                    .placeholder(R.drawable.ic_image_placeholder)
+                    .into(detailView.imageBackdrop);
+
+            //Build Poster URL
+            url = NetUtils.buildImageURL(Constants.TMDBPosterWidthBig,movieDetails.getPosterPath());
+            Picasso.get()
+                    .load(url.toString())
+                    .placeholder(R.drawable.ic_image_placeholder)
+                    .into(detailView.imagePoster);
 
             // TODO Clean this up with some helper functions
 
@@ -211,7 +191,48 @@ public class ShowMovieDetails extends AppCompatActivity implements
         @Override
         public void onScrollChanged() {
             int scrollY = Math.min(Math.max(detailView.DetailParentScrollView.getScrollY(), 0), getResources().getDimensionPixelSize(R.dimen.DetailBackdropHeight));
-            detailView.imageBackdrop.setTranslationY(scrollY / 2);
+            int scrollPos = detailView.DetailParentScrollView.getScrollY();
+            detailView.imageBackdrop.setTranslationY(scrollY / 3);
+            detailView.whitebackground.setTop(detailView.contentTitle.getTop());
+            if (scrollPos > detailView.contentTitle.getBottom()) {
+                setTitle(movieDetails.getTitle());
+            }
+            if (scrollPos < detailView.contentTitle.getBottom()) {
+                setTitle(getString(R.string.details_actionbar_name));
+            }
+            if (scrollPos > detailView.contentTitle.getTop()){
+                detailView.imagePoster.setBottom(detailView.contentRating.getBottom() - (scrollPos - detailView.contentTitle.getTop()));
+            }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater detailMenuInflater = getMenuInflater();
+        detailMenuInflater.inflate(R.menu.detail_menu, menu);
+        MenuItem item = menu.findItem(R.id.btnFavoriteMovie);
+        if (favd) item.setIcon(R.drawable.ic_fav_on);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.btnFavoriteMovie:
+                if (favd){
+                    ((DetailViewModel) viewModel).delFavorite(movieDetails);
+                    item.setIcon(R.drawable.ic_fav_off);
+                }
+                if (!favd){
+                    ((DetailViewModel) viewModel).addFavorite(movieDetails);
+                    item.setIcon(R.drawable.ic_fav_on);
+                }
+                favd = ((DetailViewModel) viewModel).isFavorited(movieDetails.getId());
+                break;
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                break;
+        }
+        return true;
     }
 }

@@ -1,15 +1,13 @@
 package com.rasjdd.ras.popularmoviesstage2;
 
+import android.arch.lifecycle.ViewModel;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.style.StyleSpan;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,6 +25,7 @@ import com.google.gson.GsonBuilder;
 import com.rasjdd.ras.popularmoviesstage2.Adapters.MainViewAdapter;
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.MovieListDetailResponse;
 import com.rasjdd.ras.popularmoviesstage2.Models.MovieList;
+import com.rasjdd.ras.popularmoviesstage2.Models.Views.MainViewModel;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.Constants;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.NetUtils;
 import com.rasjdd.ras.popularmoviesstage2.databinding.ActivityMainBinding;
@@ -42,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
     private int mPageNumber;
     private String mSortType;
     private String mSortOrder;
+    private String mTitle;
 
     private MainViewAdapter mMainViewAdapter;
 
@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
 
     ActivityMainBinding mainBinding;
 
+    private MovieList mFavList;
+    private ViewModel mViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,23 +60,19 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
 
         mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        if (mPageNumber == 0) {
-            mPageNumber = 1;
-        }
-        if (mSortType == null) {
-            mSortType = Constants.TMDBAPIQueryKeyGetPopular;
-        }
-        if (mSortOrder == null) {
-            mSortOrder = Constants.sortDescending;
-        }
+        if (mPageNumber == 0) mPageNumber = 1;
+        if (mSortType == null) mSortType = Constants.TMDBAPIQueryKeyGetPopular;
+        if (mSortOrder == null) mSortOrder = Constants.sortDescending;
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
+        mViewModel = new MainViewModel(getApplication());
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.serializeNulls();
         gMovieList = gsonBuilder.create();
 
-        GridLayoutManager posterLayout = new GridLayoutManager(this,3);
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        GridLayoutManager posterLayout = new GridLayoutManager(this,(metrics.widthPixels / 350));
 
         mainBinding.recyclerPosterGrid.setLayoutManager(posterLayout);
 
@@ -82,7 +81,20 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
         mainBinding.recyclerPosterGrid.setAdapter(mMainViewAdapter);
 
         URL mURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, mPageNumber, mSortType, mSortOrder);
-        getMovieList(mURL.toString());
+
+        if (NetUtils.testConnectivityBasic(this) && !mSortType.equals(Constants.sortByFavorites)) {
+            requestQueue = Volley.newRequestQueue(getApplicationContext());
+            getMovieList(mURL.toString());
+            updateTitle();
+        }
+        else if (!NetUtils.testConnectivityBasic(this) || mSortType == Constants.sortByFavorites){
+            mViewModel = new MainViewModel(this.getApplication());
+            mFavList = ((MainViewModel) mViewModel).getFavoriteList();
+            mMainViewAdapter.setMovieList(mFavList.getResults());
+            updateTitle();
+        }
+        
+
     }
 
     private void getMovieList(String s) {
@@ -96,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
                     getString(R.string.no_connectivity),
                     Toast.LENGTH_LONG).show();
         }
+
     }
 
     @Override
@@ -116,11 +129,22 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
                 mMainViewAdapter.setMovieList(null);
                 mainBinding.staticErrorDisplay.setVisibility(View.GONE);
                 mainBinding.staticLoadingScreen.setVisibility(View.VISIBLE);
-                getMovieList(getURL.toString());
+                if (mSortType.equals(Constants.sortByFavorites)) mFavList = ((MainViewModel) mViewModel).getFavoriteList();
+                else getMovieList(getURL.toString());
+                break;
+            case R.id.menu_sort_favorites:
+                mMainViewAdapter.setMovieList(null);
+                mSortType = Constants.sortByFavorites;
+                updateTitle();
+                mainBinding.staticErrorDisplay.setVisibility(View.GONE);
+                mainBinding.staticLoadingScreen.setVisibility(View.VISIBLE);
+                mFavList = ((MainViewModel) mViewModel).getFavoriteList();
+                mMainViewAdapter.setMovieList(mFavList.getResults());
                 break;
             case R.id.menu_sort_popularity:
                 getURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, 1, Constants.TMDBAPIQueryKeyGetPopular, null);
                 mSortType = Constants.TMDBAPIQueryKeyGetPopular;
+                updateTitle();
                 mMainViewAdapter.setMovieList(null);
                 mainBinding.staticErrorDisplay.setVisibility(View.GONE);
                 mainBinding.staticLoadingScreen.setVisibility(View.VISIBLE);
@@ -129,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
             case R.id.menu_sort_rating:
                 getURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, 1, Constants.TMDBAPIQueryKeyGetRating, null);
                 mSortType = Constants.TMDBAPIQueryKeyGetRating;
+                updateTitle();
                 mMainViewAdapter.setMovieList(null);
                 mainBinding.staticErrorDisplay.setVisibility(View.GONE);
                 mainBinding.staticLoadingScreen.setVisibility(View.VISIBLE);
@@ -137,6 +162,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
             case R.id.menu_sort_name:
                 getURL = NetUtils.buildAPIGetURL(Constants.TMDBMovieType, 1, Constants.TMDBAPIQueryKeyGetNowPlaying, null);
                 mSortType = Constants.TMDBAPIQueryKeyGetNowPlaying;
+                updateTitle();
                 mMainViewAdapter.setMovieList(null);
                 mainBinding.staticErrorDisplay.setVisibility(View.GONE);
                 mainBinding.staticLoadingScreen.setVisibility(View.VISIBLE);
@@ -151,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
     @Override
     public void onMovieDetailsClick(MovieListDetailResponse result) {
         Intent detailIntent = new Intent(this, ShowMovieDetails.class);
-        detailIntent.putExtra(MovieListDetailResponse.MyParcelName, result);
+        detailIntent.putExtra(Constants.movieIdIntent, result.getId());
         startActivity(detailIntent);
     }
 
@@ -180,6 +206,27 @@ public class MainActivity extends AppCompatActivity implements MainViewAdapter.M
         mainBinding.staticLoadingScreen.setVisibility(View.GONE);
         mainBinding.staticErrorDisplay.setVisibility(View.GONE);
         mainBinding.recyclerPosterGrid.setVisibility(View.VISIBLE);
+    }
+
+    private void updateTitle(){
+        String mTitleAppend = Constants.textJoint;
+        switch (mSortType) {
+            case Constants.TMDBAPIQueryKeyGetPopular:
+                mTitleAppend += getString(R.string.sortBy_popularity);
+                break;
+            case Constants.sortByFavorites:
+                mTitleAppend += getString(R.string.sortBy_favorites);
+                break;
+            case Constants.TMDBAPIQueryKeyGetRating:
+                mTitleAppend += getString(R.string.sortBy_rating);
+                break;
+            case Constants.TMDBAPIQueryKeyGetNowPlaying:
+                mTitleAppend += getString(R.string.sortBy_name);
+                break;
+            default:
+                mTitleAppend = "";
+        }
+        setTitle(getString(R.string.app_name) + mTitleAppend);
     }
 
 }
