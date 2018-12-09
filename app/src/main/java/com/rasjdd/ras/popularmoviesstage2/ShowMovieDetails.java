@@ -76,6 +76,7 @@ public class ShowMovieDetails extends AppCompatActivity implements
         }
         else mMovieId = parentIntent.getIntExtra(Constants.movieIdIntent, Constants.TMDBDefaultID);
 
+        // data view setup.
         detailView.DetailParentScrollView.getViewTreeObserver().addOnScrollChangedListener(new ScrollPositionObserver());
 
         GsonBuilder gsonBuilder = new GsonBuilder();
