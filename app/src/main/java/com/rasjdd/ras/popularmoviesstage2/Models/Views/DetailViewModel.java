@@ -33,4 +33,9 @@ public class DetailViewModel extends AndroidViewModel {
         return !isFavorited(movieDetails.getId());
 
     }
+
+    public FavoriteMovieDetails getFavorite(int id) {
+        return favoriteUtilities.getFavorite(id);
+    }
+
 }

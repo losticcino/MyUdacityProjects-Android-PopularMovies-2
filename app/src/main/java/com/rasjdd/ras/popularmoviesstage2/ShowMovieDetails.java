@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.rasjdd.ras.popularmoviesstage2.Adapters.ReviewSpinnerAdapter;
 import com.rasjdd.ras.popularmoviesstage2.Adapters.TrailerSpinnerAdapter;
+import com.rasjdd.ras.popularmoviesstage2.DatabaseFunctions.FavoriteMovieDetails;
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.Review;
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.Video;
 import com.rasjdd.ras.popularmoviesstage2.Models.MovieDetails;
@@ -54,6 +55,7 @@ public class ShowMovieDetails extends AppCompatActivity implements
     private ViewModel viewModel;
     private DetailViewUtilities detailViewUtilities = new DetailViewUtilities();
     private int mMovieId;
+    private FavoriteMovieDetails fav;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -99,6 +101,12 @@ public class ShowMovieDetails extends AppCompatActivity implements
         URL movieDetailUrl = NetUtils.buildMediaDetailUrl(Constants.TMDBMovieType, Integer.toString(mMovieId));
         getMovieDetails(movieDetailUrl.toString());
         favd = ((DetailViewModel) viewModel).isFavorited(mMovieId);
+
+        if (favd) {
+            fav = ((DetailViewModel) viewModel).getFavorite(mMovieId);
+            movieDetails = detailViewUtilities.convertFromFavorite(fav);
+            showBasicData();
+        }
     }
 
     private void getMovieDetails(String s) {
@@ -129,10 +137,7 @@ public class ShowMovieDetails extends AppCompatActivity implements
             URL url;
             movieDetails = gMovieDetails.fromJson(response,MovieDetails.class);
 
-            detailView.contentTitle.setText(movieDetails.getTitle());
-            detailViewUtilities.SetRating(detailView.contentRating, movieDetails.getVoteAverage());
-            detailViewUtilities.SetSynopsisText(detailView.contentSynopsis, movieDetails.getOverview());
-            detailViewUtilities.SetMoreInfo(detailView.contentMoreInfo, movieDetails.getReleaseDate(), movieDetails.getOriginalLanguage(), movieDetails.isAdult());
+            showBasicData();
 
             //Build Backdrop URL
             url = NetUtils.buildImageURL(Constants.TMDBBackdropWidthBig,movieDetails.getBackdropPath());
@@ -148,31 +153,9 @@ public class ShowMovieDetails extends AppCompatActivity implements
                     .placeholder(R.drawable.ic_image_placeholder)
                     .into(detailView.imagePoster);
 
-            // TODO Clean this up with some helper functions
+            showTrailers();
 
-            ArrayList<Video> trailerList = new ArrayList<>();
-            for (Video video : movieDetails.getVideoList().getVideos()) {
-                if (video.getType().toLowerCase().contains("trailer") || video.getType().toLowerCase().contains("teaser")) trailerList.add(video);
-            }
-            movieDetails.getVideoList().getVideos();
-            if (trailerList.size() >= 1){
-                detailView.hBreak3.setVisibility(View.VISIBLE);
-                detailView.recyclerTrailerSpinnerView.setVisibility(View.VISIBLE);
-                GridLayoutManager trailerManager = (GridLayoutManager) detailView.recyclerTrailerSpinnerView.getLayoutManager();
-                trailerManager.setSpanCount(trailerList.size());
-                trailerSpinnerAdapter.setTrailerList(trailerList);
-            }
-
-            if (null != movieDetails.getReviewList()){
-                if (movieDetails.getReviewList().getTotalResults() > 0) {
-                    GridLayoutManager reviewManager = (GridLayoutManager) detailView.recyclerReviewSpinner.getLayoutManager();
-                    reviewManager.setSpanCount(movieDetails.getReviewList().getTotalResults());
-                    ArrayList<Review> reviewList = movieDetails.getReviewList().getResults();
-                    detailView.lblNoResults.setVisibility(View.GONE);
-                    detailView.recyclerReviewSpinner.setVisibility(View.VISIBLE);
-                    reviewSpinnerAdapter.setReviewList(reviewList);
-                }
-            }
+            showReviews();
         }
     }
 
@@ -183,6 +166,14 @@ public class ShowMovieDetails extends AppCompatActivity implements
             Toast.makeText(ShowMovieDetails.this,
                     getString(R.string.cant_fetch_data),
                     Toast.LENGTH_LONG).show();
+
+            if (favd){
+                Toast.makeText(ShowMovieDetails.this,
+                        getString(R.string.show_cachce),
+                        Toast.LENGTH_LONG).show();
+
+                showBasicData();
+            }
         }
     }
 
@@ -234,5 +225,41 @@ public class ShowMovieDetails extends AppCompatActivity implements
                 break;
         }
         return true;
+    }
+
+    private void showBasicData(){
+        detailView.contentTitle.setText(movieDetails.getTitle());
+        detailViewUtilities.SetRating(detailView.contentRating, movieDetails.getVoteAverage());
+        detailViewUtilities.SetSynopsisText(detailView.contentSynopsis, movieDetails.getOverview());
+        detailViewUtilities.SetMoreInfo(detailView.contentMoreInfo, movieDetails.getReleaseDate(),
+                movieDetails.getOriginalLanguage(), movieDetails.isAdult());
+    }
+
+    private void showTrailers(){
+        ArrayList<Video> trailerList = new ArrayList<>();
+        for (Video video : movieDetails.getVideoList().getVideos()) {
+            if (video.getType().toLowerCase().contains("trailer") || video.getType().toLowerCase().contains("teaser")) trailerList.add(video);
+        }
+        movieDetails.getVideoList().getVideos();
+        if (trailerList.size() >= 1){
+            detailView.hBreak3.setVisibility(View.VISIBLE);
+            detailView.recyclerTrailerSpinnerView.setVisibility(View.VISIBLE);
+            GridLayoutManager trailerManager = (GridLayoutManager) detailView.recyclerTrailerSpinnerView.getLayoutManager();
+            trailerManager.setSpanCount(trailerList.size());
+            trailerSpinnerAdapter.setTrailerList(trailerList);
+        }
+    }
+
+    private void showReviews(){
+        if (null != movieDetails.getReviewList()){
+            if (movieDetails.getReviewList().getTotalResults() > 0) {
+                GridLayoutManager reviewManager = (GridLayoutManager) detailView.recyclerReviewSpinner.getLayoutManager();
+                reviewManager.setSpanCount(movieDetails.getReviewList().getTotalResults());
+                ArrayList<Review> reviewList = movieDetails.getReviewList().getResults();
+                detailView.lblNoResults.setVisibility(View.GONE);
+                detailView.recyclerReviewSpinner.setVisibility(View.VISIBLE);
+                reviewSpinnerAdapter.setReviewList(reviewList);
+            }
+        }
     }
 }

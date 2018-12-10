@@ -33,12 +33,12 @@ public class MainViewAdapter extends RecyclerView.Adapter<MainViewAdapter.MainVi
     }
 
     public class MainViewAdapterViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
-        public final ImageView mainViewImageView;
+         final ImageView mainViewImageView;
 
-        public MainViewAdapterViewHolder(View itemView) {
+        MainViewAdapterViewHolder(View itemView) {
             super(itemView);
             mainViewImageView = itemView.findViewById(R.id.imageGalleryPoster);
-            int position = getAdapterPosition();
+//            int position = getAdapterPosition();
             itemView.setOnClickListener(this);
         }
 
@@ -70,8 +70,6 @@ public class MainViewAdapter extends RecyclerView.Adapter<MainViewAdapter.MainVi
             urlString = imagePath.toString();
         }
 
-        //NetUtils.picassoGet(urlString, mainViewAdapterViewHolder.mainViewImageView);
-
         Picasso.get()
                 .load(urlString)
                 .placeholder(R.drawable.ic_image_placeholder)
@@ -89,4 +87,14 @@ public class MainViewAdapter extends RecyclerView.Adapter<MainViewAdapter.MainVi
         notifyDataSetChanged();
     }
 
+    public ArrayList<MovieListDetailResponse> getMovieList() {
+        return mMovieList;
+    }
+
+    public void appendMovieList(ArrayList<MovieListDetailResponse> appends) {
+        for (MovieListDetailResponse append : appends) {
+            mMovieList.add(append);
+        }
+        notifyDataSetChanged();
+    }
 }

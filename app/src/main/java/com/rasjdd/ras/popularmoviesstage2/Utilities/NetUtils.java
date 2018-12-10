@@ -59,7 +59,7 @@ public class NetUtils {
         if (mediaType == null) mediaType = Constants.TMDBMovieType;
         if (sortType == null) sortType = Constants.TMDBAPIQueryKeyGetPopular;
         if (sortOrder == null) sortOrder = Constants.sortDescending;
-        if (pageNum == null || pageNum <= 1) pageNum = 1;
+        if (pageNum <= 1) pageNum = 1;
 
         Uri.Builder formedURI = new Uri.Builder();
         formedURI.scheme("https")
@@ -67,6 +67,7 @@ public class NetUtils {
                 .appendPath(Constants.TMDBAPIVer)
                 .appendPath(mediaType)
                 .appendPath(sortType)
+                .appendQueryParameter(Constants.TMDBAPIQueryKeyPage, String.valueOf(pageNum))
                 .appendQueryParameter(Constants.TMDBAPIQueryKeyApi, APIKeys.TheMovieDbAPIKey)
                 .build();
 
