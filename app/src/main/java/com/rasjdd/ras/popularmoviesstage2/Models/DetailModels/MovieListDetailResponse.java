@@ -2,7 +2,9 @@ package com.rasjdd.ras.popularmoviesstage2.Models.DetailModels;
 
 import com.google.gson.annotations.SerializedName;
 
-public class MovieListDetailResponse {
+import java.io.Serializable;
+
+public class MovieListDetailResponse implements Serializable {
 
     @SerializedName("id")
     private int id;

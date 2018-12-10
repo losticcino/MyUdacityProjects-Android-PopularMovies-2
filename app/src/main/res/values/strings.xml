@@ -25,6 +25,7 @@
     <string name="favorite_button">Favorite</string>
     <string name="details_actionbar_name">Movie Details</string>
     <string name="intent_failed">There was an error getting the Movie information.</string>
+    <string name="show_cachce">Showing cached data.</string>
 
     <!-- An Array of default youtube videos to use -->
     <string-array name="youtube_default_IDs">

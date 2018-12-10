@@ -1,35 +1,35 @@
 package com.rasjdd.ras.popularmoviesstage2.DatabaseFunctions;
 
 import android.app.Application;
+import android.arch.lifecycle.LiveData;
 
 import com.rasjdd.ras.popularmoviesstage2.Models.DetailModels.MovieListDetailResponse;
 import com.rasjdd.ras.popularmoviesstage2.Models.MovieDetails;
-import com.rasjdd.ras.popularmoviesstage2.Models.MovieList;
 import com.rasjdd.ras.popularmoviesstage2.Utilities.AppExecutors;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class FavoriteUtilities {
-    private final ThreadLocal<MovieDAO> movieDAO = new ThreadLocal<MovieDAO>();
-    private final AppExecutors appExecutors;
+    private MovieDAO movieDAO;
+    private AppExecutors appExecutors;
+    private FavoriteMovieDetails favoriteMovieDetails;
 
     public FavoriteUtilities(Application application) {
-        movieDAO.set(FavoriteMoviesDatabase.getInstance(application).movieDAO());
+        movieDAO = FavoriteMoviesDatabase.getInstance(application).movieDAO();
         appExecutors = AppExecutors.getExecInstance();
     }
 
     public boolean movieIsFavorited(int id) {
-        FavoriteMovieDetails favoriteMovie = movieDAO.get().loadFavMovieById(id);
+        FavoriteMovieDetails favoriteMovie = movieDAO.loadFavMovieById(id);
         return favoriteMovie != null;
     }
 
-    public List<FavoriteMovieDetails> getMovieList() {
-        return movieDAO.get().loadAllFavMovies();
+    public LiveData<List<FavoriteMovieDetails>> getMovieList() {
+        return movieDAO.loadAllFavMovies();
     }
 
     public FavoriteMovieDetails convertToFavoriteMovie(MovieDetails movieDetails) {
@@ -68,50 +68,63 @@ public class FavoriteUtilities {
 
     }
 
-    public MovieList convertFavListToMovieList(List<FavoriteMovieDetails> favoriteList) {
-        ArrayList<MovieListDetailResponse> favMovArLst = null;
-        MovieList mFavs = new MovieList();
+    public MovieDetails convertFromFavorite(FavoriteMovieDetails favoriteMovieDetails) {
+        MovieDetails movieDetails = new MovieDetails();
+        
+        // Convert the date string to something more human friendly.
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String s = "";
+        s = dateFormat.format(favoriteMovieDetails.getReleaseDate());
 
-        if (null != favoriteList) {
-            for (FavoriteMovieDetails favMov : favoriteList) {
+        movieDetails.setId(favoriteMovieDetails.getId());
+        movieDetails.setAdult(favoriteMovieDetails.isAdult());
+        movieDetails.setReleaseDate(s);
+        movieDetails.setBackdropPath(favoriteMovieDetails.getBackdropPath());
+        movieDetails.setBudget(favoriteMovieDetails.getBudget());
+        movieDetails.setHomepage(favoriteMovieDetails.getHomepage());
+        movieDetails.setImdbId(favoriteMovieDetails.getImdbId());
+        movieDetails.setOriginalLanguage(favoriteMovieDetails.getOriginalLanguage());
+        movieDetails.setOriginalTitle(favoriteMovieDetails.getOriginalTitle());
+        movieDetails.setOverview(favoriteMovieDetails.getOverview());
+        movieDetails.setPopularity(favoriteMovieDetails.getPopularity());
+        movieDetails.setPosterPath(favoriteMovieDetails.getPosterPath());
+        movieDetails.setRevenue(favoriteMovieDetails.getRevenue());
+        movieDetails.setRuntime(favoriteMovieDetails.getRuntime());
+        movieDetails.setStatus(favoriteMovieDetails.getStatus());
+        movieDetails.setTagline(favoriteMovieDetails.getTagline());
+        movieDetails.setTitle(favoriteMovieDetails.getTitle());
+        movieDetails.setVoteAverage(favoriteMovieDetails.getVoteAverage());
+        movieDetails.setVoteCount(favoriteMovieDetails.getVoteCount());
+        
+        return movieDetails;
+    }
 
-                // Convert the date string to something more program friendly.
-                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                String s = "";
-                s = dateFormat.format(favMov.getReleaseDate());
+    public MovieListDetailResponse covertMovieListItemFromFavorite(FavoriteMovieDetails favoriteMovieDetails) {
+        MovieListDetailResponse movieListDetailResponse = new MovieListDetailResponse();
 
-                MovieListDetailResponse movie = null;
+        // Convert the date string to something more human friendly.
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String s = "";
+        s = dateFormat.format(favoriteMovieDetails.getReleaseDate());
 
-                movie.setId(favMov.getId());
-                movie.setAdult(favMov.isAdult());
-                movie.setRelease_date(s);
-                movie.setBackdrop_path(favMov.getBackdropPath());
-                movie.setOriginal_language(favMov.getOriginalLanguage());
-                movie.setOriginal_title(favMov.getOriginalTitle());
-                movie.setOverview(favMov.getOverview());
-                movie.setPopularity(favMov.getPopularity());
-                movie.setPoster_path(favMov.getPosterPath());
-                movie.setTitle(favMov.getTitle());
-                movie.setVote_average(favMov.getVoteAverage());
-                movie.setVote_count(favMov.getVoteCount());
+        movieListDetailResponse.setId(favoriteMovieDetails.getId());
+        movieListDetailResponse.setBackdrop_path(favoriteMovieDetails.getBackdropPath());
+        movieListDetailResponse.setPoster_path(favoriteMovieDetails.getPosterPath());
+        movieListDetailResponse.setTitle(favoriteMovieDetails.getTitle());
 
-                favMovArLst.add(movie);
-            }
-            int mMovies = favoriteList.size();
-            mFavs.setTotal_pages(1);
-            mFavs.setTotal_pages(1);
-            mFavs.setTotal_results(mMovies);
-            mFavs.setResults(favMovArLst);
-        }
-
-        return mFavs;
+        return movieListDetailResponse;
     }
 
     public void addFavorite(FavoriteMovieDetails favoriteMovieDetails) {
-        appExecutors.getDiskIO().execute(() -> movieDAO.get().insertFavMovie(favoriteMovieDetails));
+        appExecutors.getDiskIO().execute(() -> movieDAO.insertFavMovie(favoriteMovieDetails));
     }
 
     public void deleteFavorite(FavoriteMovieDetails favoriteMovieDetails) {
-        appExecutors.getDiskIO().execute(() -> movieDAO.get().deleteFavMovie(favoriteMovieDetails));
+        appExecutors.getDiskIO().execute(() -> movieDAO.deleteFavMovie(favoriteMovieDetails));
+    }
+
+    public FavoriteMovieDetails getFavorite(int id) {
+        return movieDAO.loadFavMovieById(id);
+//        return favoriteMovieDetails;
     }
 }

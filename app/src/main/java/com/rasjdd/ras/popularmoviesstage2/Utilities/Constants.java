@@ -67,5 +67,12 @@ public class Constants {
     public static final String sortByFavorites = "favorites";
     public static final String movieIdIntent = "movieId";
     public static final String textJoint = " | ";
+    public static final String layoutKey = "LayoutInstance";
+    public static final String sortingKey = "LayoutSortingSelection";
+    public static final String movieListObjectKey = "Thank Goodness it didn't require stupid parcelable";
+    public static final String prefSortTypeKey = "SortTypePreferencesKey";
+    public static final String prefSortOrderKey = "SortOrderPreferencesKey";
+    public static final String preferencesIdentity = "MrMoviesPreferences";
+
 
 }

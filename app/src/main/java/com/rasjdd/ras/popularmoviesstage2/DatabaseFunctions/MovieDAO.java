@@ -1,5 +1,6 @@
 package com.rasjdd.ras.popularmoviesstage2.DatabaseFunctions;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface MovieDAO {
 
     @Query("SELECT * FROM favMovie ORDER BY release_date")
-    List<FavoriteMovieDetails> loadAllFavMovies();
+    LiveData<List<FavoriteMovieDetails>> loadAllFavMovies();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertFavMovie(FavoriteMovieDetails favoriteMovieDetails);
